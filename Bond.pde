@@ -10,17 +10,31 @@ class Bond {
   }
   
   void attract (){
+    //println("beginning attract function");
     /** This will be called on each bond each time-step, 
     and update the velocities of the two particles based on the distance between them.
     This is something like +a/r^12-b/r^6 I think. */
     float distance=dist(particle1.position.x, particle1.position.y, particle2.position.x, particle2.position.y);
-    float magnitude=a*pow(distance/20,-6)+b*pow(distance/20,-2);
-    float angle=(PVector.sub(particle1.position,particle2.position)).heading();
-    PVector force=PVector.fromAngle(angle);
+    //println("distance calculated");
+    float magnitude=a*pow(distance/40,-6)+b*pow(distance/40,-2);
+    //println("magnitude calculated");
+    PVector force=(PVector.sub(particle1.position,particle2.position));//.heading();
+    //println("angle calculated");
+    //PVector force=PVector.fromAngle(angle);
+    //println("force created");
+    //println("force has magnitude "+force.mag()+" but it should be "+magnitude);
+    //println("force has angle "+force.heading());
+    force.normalize();
     force.mult(magnitude);
-    particle1.velocity.add(force);
-    particle2.velocity.sub(force);
-    println("Attracting: Particle 1 at "+particle1.velocity.x+", "+particle1.velocity.y+" and 2 at "+particle2.velocity.x+", "+particle2.velocity.y);
+    //println("magnitude set");
+    
+    if (particle1.fixed!=true) {
+      particle1.velocity.add(force);
+    }
+    if (particle2.fixed!=true) {
+      particle2.velocity.sub(force);
+    }
+    //println("Attracting: Particle 1 at "+particle1.velocity.x+", "+particle1.velocity.y+" and 2 at "+particle2.velocity.x+", "+particle2.velocity.y);
   }
   
 }

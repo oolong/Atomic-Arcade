@@ -3,5 +3,6 @@ class Electron extends Particle {
   Electron (float x, float y, float vx, float vy){
     super (x,y,vx,vy);
     this.sprite[0]=loadImage("electron.gif");
+    this.charge=-1;
   }
 }
