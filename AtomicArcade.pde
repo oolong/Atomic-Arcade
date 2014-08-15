@@ -7,7 +7,7 @@ ArrayList<Bond> bonds;
 float em=0.5; // Strength of the electromagnetic force
 Proton ProtonOne;
 float[] nuclearAttraction={ 
-  0.35, 0.9, 0.005
+  0.25, 0.7, 0.005
 }; // Neutron-neutron, proton-neutron, proton-proton nuclear force strength
 float nuclearRepulsion=0.8;
 float nucleonDiameter=30;
@@ -15,54 +15,98 @@ float damping=0.99;
 int atomicNumber=0;
 int atomicMass=0;
 int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4;
-float zoomLevel=1;
+float zoomLevel=2;
+float[][] halfLives;
+String[][] decayModes;
+String[] elementNames;
+String[] elementSymbols;
 
 void setup () {
   size(800, 600);
+  //orientation(LANDSCAPE);
   frameRate(30);
   nucleons=new ArrayList<Nucleon>();
   bonds=new ArrayList<Bond>();
   nucleons.add(new Proton(0, 0, 0, 0)); // Starting with a static hydrogen atom?
-  /*  nucleons.add(new Neutron(-40,0,0,-0.2)); // Starting with a static hydrogen atom?
-   nucleons.add(new Proton(0,30,0,0)); // Starting with a static hydrogen atom?
-   nucleons.add(new Neutron(40,0,0,0)); // Starting with a static hydrogen atom?
-   nucleons.add(new Proton(50,-40,0,0)); // Starting with a static hydrogen atom?
-   nucleons.add(new Neutron(90,50,0,0)); // Starting with a static hydrogen atom?
-   */  // We'll also need to create the UI here, of course
-  /*bonds.add(new Bond((Nucleon)nucleons.get(0),(Nucleon)nucleons.get(1)));
-   bonds.add(new Bond((Nucleon)nucleons.get(1),(Nucleon)nucleons.get(2)));
-   bonds.add(new Bond((Nucleon)nucleons.get(2),(Nucleon)nucleons.get(3)));
-   bonds.add(new Bond((Nucleon)nucleons.get(3),(Nucleon)nucleons.get(0)));
-   bonds.add(new Bond((Nucleon)nucleons.get(3),(Nucleon)nucleons.get(1)));
-   bonds.add(new Bond((Nucleon)nucleons.get(0),(Nucleon)nucleons.get(2)));
-   //nucleons.get(0).fixed=true;
-   */
-  background (0);
-  println("setup complete");
   ProtonOne=(Proton)nucleons.get(0);
+  background (0);
+  elementNames=new String[119];
+  elementSymbols=new String[119];
+  elementNames[0]="Nothing?";
+  elementSymbols[0]="0";
+
+/* //Java-only file loading routine. Bother.
+Table nuclides=loadTable("halflives.tsv", "header");
+  halfLives=new float[178][178];
+  decayModes=new String[178][178];  
+  for (int i=0; i<nuclides.getRowCount(); i++){
+    int protonCount=nuclides.getInt(i, 0);
+    int neutronCount=nuclides.getInt(i, 1);
+    float halfLife=nuclides.getFloat(i, 2);
+    if (Float.isNaN(halfLife)){ 
+      println("That's not a number!");
+      halfLife=Float.MAX_VALUE;
+    } 
+    println("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
+    halfLives[protonCount][neutronCount]=halfLife;
+    String decayMode=nuclides.getString(i,3);
+    decayModes[protonCount][neutronCount]=decayMode;
+  }
+  Table namesAndSymbols=loadTable("elementnames.csv");
+  for (int i=0; i<namesAndSymbols.getRowCount(); i++){
+    int protonCount=namesAndSymbols.getInt(i, 0);
+    String name=namesAndSymbols.getString(i, 2);
+    String symbol=namesAndSymbols.getString(i, 3);
+    println("Atomic Number="+protonCount+", name="+name+", symbol="+symbol);
+    elementNames[protonCount]=name;
+    elementSymbols[protonCount]=symbol;
+    //halfLives[protonCount][neutronCount]=halfLife;
+  }*/ // End Java-only bit
+   // JavaScript-only routine for reading and parsing files 
+  String[] namesAndSymbols=loadStrings("elementnames.tsv");
+  println(namesAndSymbols[0]);
+  for (int i=0; i<namesAndSymbols.length; i++){
+    String[] thisLine=splitTokens(namesAndSymbols[i]);
+    println(thisLine[0]+ ", "+thisLine[1]+", "+thisLine[2]+", "+thisLine[3]);
+    elementNames[i+1]=thisLine[2];
+    elementSymbols[i+1]=thisLine[3];
+  }
+  String[] nuclides=loadStrings("halflives.tsv");
+  halfLives=new float[178][178];
+  decayModes=new String[178][178];  
+  for (int i=1; i<nuclides.length; i++){
+    String[] thisLine=splitTokens(nuclides[i]);
+    int protonCount=thisLine[0];
+    int neutronCount=thisLine[1];
+    float halfLife=thisLine[2];
+    if (isNaN(parseFloat(halfLife))){ 
+      halfLife=100000000000;
+    } 
+    println("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
+    halfLives[protonCount][neutronCount]=halfLife;
+    String decayMode=thisLine[3];
+    decayModes[protonCount][neutronCount]=decayMode;
+  } // End JS-only bit
+  
+  println("setup complete");
 }
 
 void draw () {
   /* Modelling bit will consist of:
-   * looping over all plausible combinations of nucleons to see if we need to 
+   * looping over all plausible combinations of nucleons and applying nuclear force
    * looping over all of the protons and repelling them from each other
-   * looping over the bonds
    * adjusting all velocities
    * adjusting all positions
    */
 
-  /* Open questions for the model - should all particles be attracted to the centre?
-   *  Or should the viewport be drawn towards the centre of mass?
-   *  Do we need something like drag on the particles?
-   */
-
   background (0);
+  pushMatrix();
   translate(width/2, height/2);
   scale(zoomLevel);
-  /*fill (0, 8);
+  /* // Leave trails?
+  fill (0, 8);
   rect (-width/2, -height/2, width, height);
 */
-  //println("first loop through complete");
 
   for (int i=0; i<nucleons.size ()-1; i++) { // Loop through all possible pairs of nucleons, repel protons, apply nuclear force
     Nucleon particle1=nucleons.get(i);
@@ -82,7 +126,7 @@ void draw () {
   //println("attractions complete");
 
   for (int i=0; i<nucleons.size (); i++) { // Position-updating loop
-    thisNucleon=nucleons.get(i);
+    Nucleon thisNucleon=nucleons.get(i);
     thisNucleon.updatePosition();
     if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
     else {
@@ -93,17 +137,35 @@ void draw () {
   //println("position-updating complete");
   atomicNumber=0;
   atomicMass=0;
+  int neutrons=0;
   for (int i=0; i<nucleons.size (); i++) { // Particle-drawing loop
     nucleons.get(i).drawSprite();
     if (nucleons.get(i).linkedIn) {
       atomicMass++;
       nucleons.get(i).linkedIn=false;
       atomicNumber+=nucleons.get(i).charge;
+      if (nucleons.get(i).charge==0) neutrons++;
     }
   }
   ProtonOne.position.mult(0.9);
   ProtonOne.velocity.mult(0.9);
   ProtonOne.linkedIn=true;
+  popMatrix();
+  pushMatrix();
+  translate(width/2,0);
+  scale(4);
+  textAlign(LEFT);
+  text(elementSymbols[atomicNumber],0,20);
+  scale(0.4);
+  textAlign(RIGHT);
+  text(atomicNumber,-10,35);
+  text(atomicMass,-10,50);
+  popMatrix();
+  textAlign(LEFT);
+  text(elementNames[atomicNumber],10,30);
+  //println(decayModes[atomicNumber][neutrons]);
+  text("Decay mode: "+decayModes[atomicNumber][neutrons],10,50);
+  text("Halflife: "+halfLives[atomicNumber][neutrons],10,70);
 }
 
 void shootProton () {
