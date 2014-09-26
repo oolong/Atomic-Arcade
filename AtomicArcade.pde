@@ -7,19 +7,22 @@ ArrayList<Bond> bonds;
 float em=0.5; // Strength of the electromagnetic force
 Proton ProtonOne;
 float[] nuclearAttraction={ 
-  0.25, 0.7, 0.005
+  0.25, 0.85, 0.005
 }; // Neutron-neutron, proton-neutron, proton-proton nuclear force strength
 float nuclearRepulsion=0.8;
 float nucleonDiameter=30;
 float damping=0.99;
 int atomicNumber=0;
 int atomicMass=0;
-int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4;
-float zoomLevel=2;
+static int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4;
+static int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
+float zoomLevel=1.5;
 float[][] halfLives;
 String[][] decayModes;
+int[][] decayTypes;
 String[] elementNames;
 String[] elementSymbols;
+int[] overallMood = { 0, 0 };
 
 void setup () {
   size(800, 600);
@@ -35,10 +38,11 @@ void setup () {
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
 
-/* //Java-only file loading routine. Bother.
+ //Java-only file loading routine. Bother.
 Table nuclides=loadTable("halflives.tsv", "header");
   halfLives=new float[178][178];
   decayModes=new String[178][178];  
+  decayTypes=new int[178][178];  
   for (int i=0; i<nuclides.getRowCount(); i++){
     int protonCount=nuclides.getInt(i, 0);
     int neutronCount=nuclides.getInt(i, 1);
@@ -50,7 +54,27 @@ Table nuclides=loadTable("halflives.tsv", "header");
     println("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
     halfLives[protonCount][neutronCount]=halfLife;
     String decayMode=nuclides.getString(i,3);
-    decayModes[protonCount][neutronCount]=decayMode;
+    if (decayModes[protonCount][neutronCount]==null) decayModes[protonCount][neutronCount]=decayMode;
+    if (decayMode.charAt(0)=='A') { 
+      decayTypes[protonCount][neutronCount]=HELIUM;
+    }
+    else if (decayMode.charAt(0)=='E') { 
+      decayTypes[protonCount][neutronCount]=POSITRON;
+    }
+    else if (decayMode.charAt(0)=='B') { 
+      decayTypes[protonCount][neutronCount]=ELECTRON;
+    }
+    else if (decayMode.charAt(0)=='P') { 
+      decayTypes[protonCount][neutronCount]=PROTON;
+    }
+    else if (decayMode.charAt(0)=='N') { 
+      decayTypes[protonCount][neutronCount]=NEUTRON;
+    }
+    else { 
+      decayTypes[protonCount][neutronCount]=UNKNOWN;
+    }
+    println("decayType="+decayTypes[protonCount][neutronCount]);
+
   }
   Table namesAndSymbols=loadTable("elementnames.csv");
   for (int i=0; i<namesAndSymbols.getRowCount(); i++){
@@ -61,8 +85,8 @@ Table nuclides=loadTable("halflives.tsv", "header");
     elementNames[protonCount]=name;
     elementSymbols[protonCount]=symbol;
     //halfLives[protonCount][neutronCount]=halfLife;
-  }*/ // End Java-only bit
-   // JavaScript-only routine for reading and parsing files 
+  }  // End Java-only bit
+   /*// JavaScript-only routine for reading and parsing files 
   String[] namesAndSymbols=loadStrings("elementnames.tsv");
   println(namesAndSymbols[0]);
   for (int i=0; i<namesAndSymbols.length; i++){
@@ -86,7 +110,7 @@ Table nuclides=loadTable("halflives.tsv", "header");
     halfLives[protonCount][neutronCount]=halfLife;
     String decayMode=thisLine[3];
     decayModes[protonCount][neutronCount]=decayMode;
-  } // End JS-only bit
+  } */// End JS-only bit
   
   println("setup complete");
 }
@@ -129,12 +153,17 @@ void draw () {
     Nucleon thisNucleon=nucleons.get(i);
     thisNucleon.updatePosition();
     if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
-    else {
+    else if (thisNucleon.linkedIn) {
       //println("was "+thisNucleon.mood);
-      thisNucleon.mood=0;
+      thisNucleon.mood=overallMood[thisNucleon.charge];
+    }
+    else {
+      thisNucleon.mood=OHNOEZ;
     }
   }
   //println("position-updating complete");
+  int oldAtomicNumber=atomicNumber;
+  int oldNeutrons=neutrons;
   atomicNumber=0;
   atomicMass=0;
   int neutrons=0;
@@ -147,6 +176,33 @@ void draw () {
       if (nucleons.get(i).charge==0) neutrons++;
     }
   }
+  if (atomicNumber!=oldAtomicNumber||neutrons!=oldNeutrons){
+    // Announce new element
+    int newMood=SMILE;
+    if (halfLives[atomicNumber][neutrons]<100000) newMood=FROWN;
+    else if (halfLives[atomicNumber][neutrons]<1000) newMood=CONCERN;
+    else {
+      overallMood[1]=SMILE;
+      overallMood[0]=SMILE;
+    }     
+    if (decayTypes[atomicNumber][neutrons]==NEUTRON|decayTypes[atomicNumber][neutrons]==ELECTRON){
+      overallMood[0]=newMood;
+      overallMood[1]=SMILE;
+    }
+    else if (decayTypes[atomicNumber][neutrons]==PROTON|decayTypes[atomicNumber][neutrons]==POSITRON){
+      overallMood[1]=newMood;
+      overallMood[0]=SMILE;
+    }
+    else if (decayTypes[atomicNumber][neutrons]==HELIUM) {
+      overallMood[1]=newMood;
+      overallMood[0]=newMood;
+    }
+    else {
+      overallMood[1]=SMILE;
+      overallMood[0]=SMILE;
+    }     
+      
+  }
   ProtonOne.position.mult(0.9);
   ProtonOne.velocity.mult(0.9);
   ProtonOne.linkedIn=true;
@@ -155,11 +211,16 @@ void draw () {
   translate(width/2,0);
   scale(4);
   textAlign(LEFT);
-  text(elementSymbols[atomicNumber],0,20);
+  if (atomicNumber<elementSymbols.length){
+    text(elementSymbols[atomicNumber],0,20);
+  }
+  else {
+    text("Xx",0,20);
+  }
   scale(0.4);
   textAlign(RIGHT);
-  text(atomicNumber,-10,35);
-  text(atomicMass,-10,50);
+  text(atomicNumber,0,35);
+  text(atomicMass,0,50);
   popMatrix();
   textAlign(LEFT);
   text(elementNames[atomicNumber],10,30);
