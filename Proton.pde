@@ -2,11 +2,11 @@ class Proton extends Nucleon {
   Proton (float x, float y, float vx, float vy){
     super (x, y, vx, vy);
     this.sprite=new PImage[5];
-    for (int i=0; i<4; i++){
+    for (int i=0; i<5; i++){
       this.sprite[i]=loadImage("proton"+i+".png");
     }
     this.charge=1;
-    println("Proton mood on creation: "+this.mood);
+    printIfDebugging("Proton mood on creation: "+this.mood);
   }
   void repel (Proton that){
     // calculate distance and angle, alter velocities
@@ -16,7 +16,7 @@ class Proton extends Nucleon {
     PVector force=(PVector.sub (this.position, that.position));//.heading();
     force.normalize();
     force.mult (magnitude);
-    //println ("repelling by "+magnitude);
+    //printIfDebugging ("repelling by "+magnitude);
     if (this.fixed!=true) {
       this.velocity.add(force);
     }

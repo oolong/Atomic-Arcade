@@ -20,9 +20,9 @@ class Particle {
       velocity.mult(damping); // It may make more sense to apply damping once per linked particle elsewhere
     }
        
-    //println("x: "+position.x+" y: "+position.y+" vx: "+velocity.x+" vy: "+velocity.y);
+    //printIfDebugging("x: "+position.x+" y: "+position.y+" vx: "+velocity.x+" vy: "+velocity.y);
     if (abs(position.x)>width*5/8||abs(position.y)>height*5/8) {
-      println("doom time! x="+position.x+", y="+position.y);
+      printIfDebugging("doom time! x="+position.x+", y="+position.y);
       nucleons.remove(this);
     }
   }
