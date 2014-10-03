@@ -15,6 +15,15 @@ class Nucleon extends Particle { // It's possible this should be an interface
     float distSq=(sq(diff.x)+sq(diff.y))/sq(this.diameter);
     //text(distSq, 100,100);
     //text(sq(this.diameter), 100,120);
+    float attractionMultiplier=-1;
+    if (this.mood==BYEBYE ^ that.mood==BYEBYE) { // If one of these particles is going byebye, repel it
+      attractionMultiplier=1;
+      printIfDebugging("BYEBYE FORCE");
+    }
+    if (this.mood==OHNOEZ | that.mood==OHNOEZ){
+      attractionMultiplier*=0.6;
+    }
+
     if (distSq<10) {
       if (this.linkedIn==true||that.linkedIn==true) {
         this.linkedIn=true;
@@ -27,7 +36,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
          and update the velocities of the two particles based on the distance between them.
          This is something like +a/r^12-b/r^6 I think. */
         //printIfDebugging("distance calculated");
-        float magnitude=nuclearRepulsion/sq(sq(distSq))-nuclearAttraction[totalCharge]/sq(distSq);
+        float magnitude=nuclearRepulsion/sq(sq(distSq))+attractionMultiplier*nuclearAttraction[totalCharge]/sq(distSq);
         //printIfDebugging("magnitude calculated");
         PVector force=diff;//(PVector.sub(this.position, that.position));//.heading(); // Force is a vector in the same direction as the difference between the particles...
         //printIfDebugging("angle calculated");
@@ -40,8 +49,8 @@ class Nucleon extends Particle { // It's possible this should be an interface
         //printIfDebugging("magnitude set");
         this.velocity.add(force);
         that.velocity.sub(force);
-        if (magnitude>0.5) { // Express slight concern about bouncing
-          if (this.mood!=FROWN){
+        if (magnitude>0.5 && attractionMultiplier==-1) { // Express slight concern about bouncing
+          if (this.mood!=FROWN) {
             this.velocity.mult(0.5);
             that.velocity.mult(0.5);
           }
@@ -51,7 +60,8 @@ class Nucleon extends Particle { // It's possible this should be an interface
           that.moodTime=10;
         }
         //printIfDebugging("Attracting: Particle 1 at "+particle1.velocity.x+", "+particle1.velocity.y+" and 2 at "+particle2.velocity.x+", "+particle2.velocity.y);
-      } else {
+      } 
+      else {
         PVector collisionPoint=new PVector((this.position.x+that.position.x)/2, (this.position.y+that.position.y)/2);
         PVector thisVector=PVector.sub(this.position, collisionPoint);
         float thisDistance=thisVector.mag();
@@ -65,7 +75,8 @@ class Nucleon extends Particle { // It's possible this should be an interface
   }
   void drawShadow() {
     noStroke();
-    fill(0,64);
+    fill(0, 64);
     ellipse(position.x-5, position.y+5, 27, 27);
   }
 }
+

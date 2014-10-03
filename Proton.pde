@@ -1,8 +1,8 @@
 class Proton extends Nucleon {
   Proton (float x, float y, float vx, float vy){
     super (x, y, vx, vy);
-    this.sprite=new PImage[5];
-    for (int i=0; i<5; i++){
+    this.sprite=new PImage[6];
+    for (int i=0; i<6; i++){
       this.sprite[i]=loadImage("proton"+i+".png");
     }
     this.charge=1;
