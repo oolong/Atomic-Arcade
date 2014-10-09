@@ -202,7 +202,7 @@ void draw () {
   textAlign(LEFT);
   textSize(60);
   if (atomicNumber<elementSymbols.length) {
-    text(elementSymbols[atomicNumber], 32, 100);
+    text(elementSymbols[atomicNumber], 32, 96);
   }
   else {
     text("Xx", 0, 20);
@@ -216,7 +216,7 @@ void draw () {
   if (elementNames[atomicNumber].length()>10) {
     textSize(14);
   }
-  text(elementNames[atomicNumber], 60, 120);
+  text(elementNames[atomicNumber], 60, 122);
   popMatrix();
   cannonCountdown--;
   if (cannonCountdown==4) {
@@ -268,7 +268,7 @@ void shootProton () {
   cannonCountdown=5;
   currentCannon=0;
   float relV=2*log((atomicNumber+9)/3);
-  nucleons.add(new Proton (-width/(2*zoomLevel)+20, height/(2*zoomLevel)-50, relV, -relV*(height)/width));
+  nucleons.add(new Proton (-width/(2*zoomLevel)+25, height/(2*zoomLevel)-54, relV, -relV*(height)/width));
 }
 
 void shootNeutron () {
@@ -276,7 +276,7 @@ void shootNeutron () {
   cannonCountdown=5;
   currentCannon=1;
   float relV=2*log((atomicNumber+9)/3);
-  nucleons.add(new Neutron (width/(2*zoomLevel)-50, height/(2*zoomLevel)-50, -relV, -relV*(height)/width));
+  nucleons.add(new Neutron (width/(2*zoomLevel)-44, height/(2*zoomLevel)-54, -relV, -relV*(height)/width));
 }
 
 
