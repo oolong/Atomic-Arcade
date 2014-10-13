@@ -6,6 +6,6 @@ class Neutron extends Nucleon {
       this.sprite[i]=loadImage("neutron"+i+".png");
     }
     this.charge=0;
-    printIfDebugging("Neutron mood on creation: "+this.mood+" moodTime: "+moodTime);
+    printIfDebugging("Neutron mood="+this.mood+" moodTime="+moodTime+" x="+this.position.x+" y="+this.position.y);
   }
 }  

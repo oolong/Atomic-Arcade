@@ -2,11 +2,26 @@ class Nucleon extends Particle { // It's possible this should be an interface
   boolean fixed=false;
   int mood, moodTime;
   float diameter;
+  float vibrate=2;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
     mood=WHEEE;
     moodTime=200;
     diameter=nucleonDiameter;
+    int i=0;
+    replacement=false;
+    while (i<nucleonCount) {
+      if (!nucleons[i].active) {
+        replacement=true;
+        nucleons[i]=this;
+        break;
+      }
+      i++;
+    }
+    if (!replacement) {
+      nucleons[nucleonCount]=this;
+      nucleonCount++;
+    }
   }
 
   void attract (Nucleon that) {
@@ -20,7 +35,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
       attractionMultiplier=1;
       printIfDebugging("BYEBYE FORCE");
     }
-    if (this.mood==OHNOEZ | that.mood==OHNOEZ){
+    if (this.mood==OHNOEZ | that.mood==OHNOEZ) {
       attractionMultiplier*=0.6;
     }
 
@@ -77,6 +92,13 @@ class Nucleon extends Particle { // It's possible this should be an interface
     noStroke();
     fill(0, 64);
     ellipse(position.x-5, position.y+5, 27, 27);
+  }
+  void updatePosition() {
+    super.updatePosition();
+    if (this.mood==OHNOEZ && this!=protonOne) {
+      this.position.x+=vibrate;
+      vibrate=-vibrate;
+    }
   }
 }
 

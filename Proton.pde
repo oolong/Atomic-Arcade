@@ -6,7 +6,7 @@ class Proton extends Nucleon {
       this.sprite[i]=loadImage("proton"+i+".png");
     }
     this.charge=1;
-    printIfDebugging("Proton mood on creation: "+this.mood);
+    printIfDebugging("Proton mood on creation: "+this.mood+" x="+this.position.x+" y="+this.position.y);
   }
   void repel (Proton that){
     // calculate distance and angle, alter velocities
