@@ -1,11 +1,9 @@
-/* @pjs preload="circle-32.png, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
+/* @pjs preload="circle-32.png, helpPageWeb.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
  */
 
-ArrayList<Nucleon> nucleons;
-ArrayList<Bond> bonds;
-ArrayList<Nucleon> doomed;
+Nucleon[] nucleons;
+Nucleon[] doomed;
 float doomTime=1666;
-//ArrayList<Proton> protons;
 float em=0.5; // Strength of the electromagnetic force
 Proton protonOne;
 float[] nuclearAttraction= { 
@@ -14,9 +12,9 @@ float[] nuclearAttraction= {
 float nuclearRepulsion=0.8;
 float nucleonDiameter=30;
 float damping=0.99;
-int atomicNumber=0, neutrons=0;
-int atomicMass=0;
-int cannonCountdown=0, currentCannon=0;
+int atomicNumber=0, neutrons=0, killList=0;
+int atomicMass=0, nucleonCount=0, particlesMade=0;
+int neutronCannonCountdown=0, protonCannonCountdown=0, currentCannon=0;
 static int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
 static int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
 float zoomLevel=1.5;
@@ -28,8 +26,9 @@ String[] elementSymbols;
 int[] overallMood = { 
   0, 0
 };
-PImage backgroundImage, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon;
-boolean debugging=false, java=false;
+PImage backgroundImage, helpScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon;
+
+boolean debugging=false, java=false, paused=true;
 
 void setup () {
   size(512, 600);
@@ -37,11 +36,14 @@ void setup () {
   ellipseMode(CORNER);
   //orientation(LANDSCAPE);
   frameRate(30);
-  nucleons=new ArrayList<Nucleon>();
-  bonds=new ArrayList<Bond>();
-  doomed=new ArrayList<Nucleon>();
-  nucleons.add(new Proton(0, 0, 0, 0)); // Starting with a static hydrogen atom?
-  protonOne=(Proton)nucleons.get(0);
+  helpScreen=loadImage("helpPageWeb.jpg");
+  background (helpScreen);
+  noLoop();
+  nucleons=new Nucleon[300];
+  doomed=new Nucleon[16];
+  protonOne=new Proton(0, 0, 0, 0);
+  printIfDebugging("first proton brings nucleonCount to "+nucleonCount);
+  nucleons[0]=protonOne; // Starting with a static hydrogen atom
   backgroundImage=loadImage("background-for-web-demo.jpg");
   elementPad=loadImage("element-pad.png");
   protonCannonNeutral=loadImage("proton-cannon-neutral.png");
@@ -52,16 +54,13 @@ void setup () {
   neutronCannonUp=loadImage("neutron-cannon-up.png");
   protonCannon=protonCannonNeutral;
   neutronCannon=neutronCannonNeutral;
-  background (backgroundImage);
   elementNames=new String[119];
   elementSymbols=new String[119];
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
-  loadData();
-  //Java-only file loading routine. Bother.
-
-
-  printIfDebugging("setup complete");
+  loadData(); // Note that this method needs commenting or uncommenting depending on mode
+  printIfDebugging("setup complete - nucleonCount="+nucleonCount);
+  //redraw();
 }
 
 void draw () {
@@ -72,34 +71,45 @@ void draw () {
    * adjusting all positions
    */
 
-  background (backgroundImage);
-  pushMatrix();
-  translate(width/2, height/2);
-  scale(zoomLevel);
-  /* // Leave trails?
-   fill (0, 8);
-   rect (-width/2, -height/2, width, height);
-   */
-
-  for (int i=0; i<nucleons.size ()-1; i++) { // Loop through all possible pairs of nucleons, repel protons, apply nuclear force
-    Nucleon particle1=nucleons.get(i);
-    for (int j=i+1; j<nucleons.size (); j++) {
-      Nucleon particle2=nucleons.get(j);
-      //checkBonds (particle1, particle2);
-      if (particle1.charge * particle2.charge==1) { // Only happens if both particles are protons
-        ((Proton)particle1).repel((Proton)particle2);
-      }
-      particle1.attract(particle2);
-    }
+  if (paused) {
+    background(helpScreen);
+    image(helpScreen, 0, 0);
   }
+  else {
+    background (backgroundImage);
+    pushMatrix();
+    translate(width/2, height/2);
+    if (atomicMass>39 && atomicMass<119 && zoomLevel>1) {
+      zoomLevel*=0.98;
+    }
+    else if (atomicMass>119 && zoomLevel>0.75) {
+      zoomLevel*=0.98;
+    }
+    scale(zoomLevel);
+    /* // Leave trails?
+     fill (0, 8);
+     rect (-width/2, -height/2, width, height);
+     */
 
-  /*for (int i=0; i<bonds.size(); i++){ // Bond-attraction loop
-   bonds.get(i).attract();
-   }*/
-  //printIfDebugging("attractions complete");
-
-  for (int i=0; i<nucleons.size (); i++) { // Position and mood updating  loop
-    Nucleon thisNucleon=nucleons.get(i);
+    for (int i=0; i<nucleonCount; i++) { // Loop through all possible pairs of nucleons, repel protons, apply nuclear force
+      Nucleon particle1=nucleons[i];
+      if (particle1.active) {
+        for (int j=i+1; j<nucleonCount; j++) {
+          Nucleon particle2=nucleons[j];
+          if (particle2.active) {
+            if (particle1.charge * particle2.charge==1) { // Only happens if both particles are protons
+              ((Proton)particle1).repel((Proton)particle2);
+            }
+          }
+        }
+      }
+    }
+    
+    // Point at which IDE fucked right up
+    
+    
+ for (int i=0; i<nucleonCount; i++) { // Position and mood updating  loop
+    Nucleon thisNucleon=nucleons[i];
     thisNucleon.updatePosition();
     if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
     else if (thisNucleon.linkedIn) { 
@@ -110,9 +120,9 @@ void draw () {
       thisNucleon.mood=OHNOEZ;  // UH OH, WHERE AM I GOING?! WHY IS EVERYONE FLOATING AWAY FROM ME?
     }
   }
-  if (millis()>doomTime && doomed.size()>0) {  // Time's up
-    for (int i=0; i<doomed.size(); i++) {
-      doomed.get(i).mood=OHNOEZ; // It is not long for this world...
+  if (millis()>doomTime && killList>0) {  // Time's up
+    for (int i=0; i<killList; i++) {
+      doomed[i].mood=OHNOEZ; // It is not long for this world...
       //doomed.diameter=nucleonDiameter*5;
       //printIfDebugging("DOOM!");
       // doomed.get(i).decay(decayMode); // THE END IS NIGH
@@ -125,11 +135,12 @@ void draw () {
      impulse.normalize();
      impulse.mult(10);*/
     //printIfDebugging("impulse x="+impulse.x+" y="+impulse.y);
-    if (doomed.get(0)!=protonOne) {
+    if (doomed[0]!=protonOne && killList>0) {
       //doomed.get(0).diameter*=3;
-      (doomed.get(0)).mood=BYEBYE;
-      (doomed.get(0)).moodTime=1000;
-      doomed.clear();
+      (doomed[0]).mood=BYEBYE;
+      (doomed[0]).moodTime=2000;
+      doomed[0]=null;
+      killList--;
     }
   }
   //printIfDebugging("position-updating complete");
@@ -138,16 +149,16 @@ void draw () {
   atomicNumber=0;
   atomicMass=0;
   neutrons=0;
-  for (int i=0; i<nucleons.size (); i++) { // Shadow-drawing loop
-    nucleons.get(i).drawShadow();
+  for (int i=0; i<nucleonCount; i++) { // Shadow-drawing loop
+    nucleons[i].drawShadow();
   }
-  for (int i=0; i<nucleons.size (); i++) { // Particle-drawing loop, also counts neutrons and mass
-    nucleons.get(i).drawSprite();
-    if (nucleons.get(i).linkedIn) {
+  for (int i=0; i<nucleonCount; i++) { // Particle-drawing loop, also counts neutrons and mass
+    nucleons[i].drawSprite();
+    if (nucleons[i].linkedIn) {
       atomicMass++;
-      nucleons.get(i).linkedIn=false;
-      atomicNumber+=nucleons.get(i).charge;
-      if (nucleons.get(i).charge==0) neutrons++;
+      nucleons[i].linkedIn=false;
+      atomicNumber+=nucleons[i].charge;
+      if (nucleons[i].charge==0) neutrons++;
     }
   }
   if (atomicNumber!=oldAtomicNumber||neutrons!=oldNeutrons) { // New nuclide time
@@ -202,7 +213,7 @@ void draw () {
   textAlign(LEFT);
   textSize(60);
   if (atomicNumber<elementSymbols.length) {
-    text(elementSymbols[atomicNumber], 32, 100);
+    text(elementSymbols[atomicNumber], 32, 96);
   }
   else {
     text("Xx", 0, 20);
@@ -216,7 +227,7 @@ void draw () {
   if (elementNames[atomicNumber].length()>10) {
     textSize(14);
   }
-  text(elementNames[atomicNumber], 60, 120);
+  text(elementNames[atomicNumber], 60, 122);
   popMatrix();
   cannonCountdown--;
   if (cannonCountdown==4) {
@@ -250,8 +261,8 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
   float greatestDistance=0;
   Nucleon currentNucleon;
   Nucleon furthestNucleon=protonOne;
-  for (int i=0; i<nucleons.size(); i++) {
-    currentNucleon=nucleons.get(i);
+  for (int i=0; i<nucleonsCount; i++) {
+    currentNucleon=nucleons[i];
     if (currentNucleon.charge==charge) { // Find the furthest one
       float distance=sqrt(currentNucleon.position.x*currentNucleon.position.x + currentNucleon.position.y*currentNucleon.position.y);
       if (distance>greatestDistance) {
@@ -268,7 +279,7 @@ void shootProton () {
   cannonCountdown=5;
   currentCannon=0;
   float relV=2*log((atomicNumber+9)/3);
-  nucleons.add(new Proton (-width/(2*zoomLevel)+20, height/(2*zoomLevel)-50, relV, -relV*(height)/width));
+  nucleons.add(new Proton (-width/(2*zoomLevel)+25, height/(2*zoomLevel)-54, relV, -relV*(height)/width));
 }
 
 void shootNeutron () {
@@ -276,7 +287,7 @@ void shootNeutron () {
   cannonCountdown=5;
   currentCannon=1;
   float relV=2*log((atomicNumber+9)/3);
-  nucleons.add(new Neutron (width/(2*zoomLevel)-50, height/(2*zoomLevel)-50, -relV, -relV*(height)/width));
+  nucleons.add(new Neutron (width/(2*zoomLevel)-44, height/(2*zoomLevel)-54, -relV, -relV*(height)/width));
 }
 
 
@@ -305,7 +316,7 @@ void keyReleased() {
     printIfDebugging("key r pressed");
     nucleons.clear();
     nucleons.add(new Proton(0, 0, 0, 0)); 
-    protonOne=(Proton)nucleons.get(0);
+    protonOne=(Proton)nucleons[0];
   }
 }
 
@@ -425,46 +436,8 @@ void loadData() {
   }
 }
 
-/** Representing the strong nuclear force between two particles (probably invisibly). */
-class Bond {
-  Nucleon particle1;
-  Nucleon particle2;
-  float a=0.1, b=-0.2;
-  
-  Bond(Nucleon particle1, Nucleon particle2){
-    this.particle1=particle1;
-    this.particle2=particle2;
-  }
-  
-  void attract (){
-    //println("beginning attract function");
-    /** This will be called on each bond each time-step, 
-    and update the velocities of the two particles based on the distance between them.
-    This is something like +a/r^12-b/r^6 I think. */
-    float distance=dist(particle1.position.x, particle1.position.y, particle2.position.x, particle2.position.y);
-    //println("distance calculated");
-    float magnitude=a*pow(distance/40,-6)+b*pow(distance/40,-2);
-    //println("magnitude calculated");
-    PVector force=(PVector.sub(particle1.position,particle2.position));//.heading();
-    //println("angle calculated");
-    //PVector force=PVector.fromAngle(angle);
-    //println("force created");
-    //println("force has magnitude "+force.mag()+" but it should be "+magnitude);
-    //println("force has angle "+force.heading());
-    force.normalize();
-    force.mult(magnitude);
-    //println("magnitude set");
     
-    if (particle1.fixed!=true) {
-      particle1.velocity.add(force);
-    }
-    if (particle2.fixed!=true) {
-      particle2.velocity.sub(force);
-    }
-    //println("Attracting: Particle 1 at "+particle1.velocity.x+", "+particle1.velocity.y+" and 2 at "+particle2.velocity.x+", "+particle2.velocity.y);
-  }
-  
-}
+    
 class Electron extends Particle {
   // May not need anything much added besides the right sprite.
   Electron (float x, float y, float vx, float vy){
@@ -474,25 +447,41 @@ class Electron extends Particle {
   }
 }
 class Neutron extends Nucleon {
-  Neutron (float x, float y, float vx, float vy){
+  Neutron (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
     this.sprite=new PImage[6];
-    for (int i=0; i<6; i++){
+    for (int i=0; i<6; i++) {
       this.sprite[i]=loadImage("neutron"+i+".png");
     }
     this.charge=0;
-    printIfDebugging("Neutron mood on creation: "+this.mood+" moodTime: "+moodTime);
+    printIfDebugging("Neutron mood="+this.mood+" moodTime="+moodTime+" x="+this.position.x+" y="+this.position.y);
   }
 }  
+
 class Nucleon extends Particle { // It's possible this should be an interface
   boolean fixed=false;
   int mood, moodTime;
   float diameter;
+  float vibrate=2;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
     mood=WHEEE;
     moodTime=200;
     diameter=nucleonDiameter;
+    int i=0;
+    replacement=false;
+    while (i<nucleonCount) {
+      if (!nucleons[i].active) {
+        replacement=true;
+        nucleons[i]=this;
+        break;
+      }
+      i++;
+    }
+    if (!replacement) {
+      nucleons[nucleonCount]=this;
+      nucleonCount++;
+    }
   }
 
   void attract (Nucleon that) {
@@ -506,7 +495,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
       attractionMultiplier=1;
       printIfDebugging("BYEBYE FORCE");
     }
-    if (this.mood==OHNOEZ | that.mood==OHNOEZ){
+    if (this.mood==OHNOEZ | that.mood==OHNOEZ) {
       attractionMultiplier*=0.6;
     }
 
@@ -564,6 +553,13 @@ class Nucleon extends Particle { // It's possible this should be an interface
     fill(0, 64);
     ellipse(position.x-5, position.y+5, 27, 27);
   }
+  void updatePosition() {
+    super.updatePosition();
+    if (this.mood==OHNOEZ && this!=protonOne) {
+      this.position.x+=vibrate;
+      vibrate=-vibrate;
+    }
+  }
 }
 
 class Particle {
@@ -573,43 +569,50 @@ class Particle {
   float mass;
   int charge;
   boolean linkedIn=false;
+  boolean active=true;
+  int particleIndex;
+  float vibrate=2;
   //float x, y, vx, vy;
-  Particle (float x, float y, float vx, float vy){
+  Particle (float x, float y, float vx, float vy) {
     this.position=new PVector (x, y);
     this.velocity=new PVector (vx, vy);
     this.sprite=new PImage[1];
     this.sprite[0]=loadImage("default.gif");
+    this.particleIndex=particlesMade;
+    particlesMade++;
+    printIfDebugging("particlesMade="+particlesMade);
   }
-  void updatePosition(){
+  void updatePosition() {
     position.add(velocity);
     //float distFromCentre=mag(this.position.x,this.position.y);
     if (linkedIn) {
       position.add(new PVector(-position.y/500, position.x/500));
       velocity.mult(damping); // It may make more sense to apply damping once per linked particle elsewhere
     }
-       
+
     //printIfDebugging("x: "+position.x+" y: "+position.y+" vx: "+velocity.x+" vy: "+velocity.y);
-    if (abs(position.x)>width*5/8||abs(position.y)>height*5/8) {
-      printIfDebugging("doom time! x="+position.x+", y="+position.y);
-      nucleons.remove(this);
+    if (abs(position.x)>width*5/8||abs(position.y)>height*5/8) { // Particle has escaped - mark it inactive and do nothing more with it
+      printIfDebugging("doom time!");
+      this.active=false;
     }
   }
-  
-  void drawSprite(){
+
+  void drawSprite() {
     image(sprite[0].get(), position.x, position.y, 30, 30);
   }
 }
+
 class Proton extends Nucleon {
-  Proton (float x, float y, float vx, float vy){
+  Proton (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
     this.sprite=new PImage[6];
-    for (int i=0; i<6; i++){
+    for (int i=0; i<6; i++) {
       this.sprite[i]=loadImage("proton"+i+".png");
     }
     this.charge=1;
-    printIfDebugging("Proton mood on creation: "+this.mood);
+    printIfDebugging("Proton mood on creation: "+this.mood+" x="+this.position.x+" y="+this.position.y);
   }
-  void repel (Proton that){
+  void repel (Proton that) {
     // calculate distance and angle, alter velocities
     PVector difference=PVector.sub (this.position, that.position);
     float distSq=sq(difference.x)+sq(difference.y); // Use Pythagoras to get the square of the distance between the vectors
@@ -623,7 +626,8 @@ class Proton extends Nucleon {
     }
     if (that.fixed!=true) {
       that.velocity.sub (force);
-    }    
-  }  
+    }
+  }
 }
+
 

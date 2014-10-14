@@ -5,11 +5,11 @@ class Nucleon extends Particle { // It's possible this should be an interface
   float vibrate=2;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
-    mood=WHEEE;
+    mood=WHEEE; // A split second's excitement on entry
     moodTime=200;
     diameter=nucleonDiameter;
     int i=0;
-    replacement=false;
+    boolean replacement=false;
     while (i<nucleonCount) {
       if (!nucleons[i].active) {
         replacement=true;
@@ -33,7 +33,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
     float attractionMultiplier=-1;
     if (this.mood==BYEBYE ^ that.mood==BYEBYE) { // If one of these particles is going byebye, repel it
       attractionMultiplier=1;
-      printIfDebugging("BYEBYE FORCE");
+      //printIfDebugging("BYEBYE FORCE");
     }
     if (this.mood==OHNOEZ | that.mood==OHNOEZ) {
       attractionMultiplier*=0.6;
@@ -64,7 +64,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
         //printIfDebugging("magnitude set");
         this.velocity.add(force);
         that.velocity.sub(force);
-        if (magnitude>0.5 && attractionMultiplier==-1) { // Express slight concern about bouncing
+        if (magnitude>0.5 && attractionMultiplier==-1 && this.mood!=OHNOEZ) { // Express slight concern about bouncing
           if (this.mood!=FROWN) {
             this.velocity.mult(0.5);
             that.velocity.mult(0.5);
@@ -86,7 +86,8 @@ class Nucleon extends Particle { // It's possible this should be an interface
     }
   }
   void drawSprite() {
-    image(sprite[mood].get(), position.x, position.y, 30, 30);
+    //printIfDebugging("Mood="+mood);
+    image(sprite[mood], position.x, position.y, 30, 30);
   }
   void drawShadow() {
     noStroke();
