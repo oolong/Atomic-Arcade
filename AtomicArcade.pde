@@ -15,8 +15,8 @@ float damping=0.99;
 int atomicNumber=0, neutrons=0, killList=0;
 int atomicMass=0, nucleonCount=0, particlesMade=0;
 int neutronCannonCountdown=0, protonCannonCountdown=0, currentCannon=0;
-static int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
-static int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
+final int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
+final int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
 float zoomLevel=1.25;
 float[][] halfLives;
 String[][] decayModes;
@@ -28,7 +28,7 @@ int[] overallMood = {
 };
 PImage backgroundImage, helpScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon;
 PImage[] protonImages, neutronImages;
-boolean debugging=true, java=true, paused=false;
+boolean debugging=true, java=false, paused=false;
 
 void setup () {
   size(512, 600);
@@ -61,8 +61,8 @@ void setup () {
   elementSymbols=new String[119];
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
-  loadData(); // Note that this method needs commenting or uncommenting depending on mode
   protonOne=new Proton(0, 0, 0, 0);
+  loadData(); // Note that this method needs commenting or uncommenting depending on mode
   printIfDebugging("setup complete - nucleonCount="+nucleonCount);
   //redraw();
 }
@@ -122,6 +122,10 @@ void draw () {
         if (millis()>doomTime+2000 && thisNucleon.mood==OHNOEZ) {
           thisNucleon.mood=BYEBYE;
           thisNucleon.moodTime=2000;
+        }
+        if (millis()<doomTime+1000 && thisNucleon.mood==BYEBYE) {
+          thisNucleon.mood=WHEEE;
+          thisNucleon.moodTime=500;
         }
         if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
         else if (thisNucleon.linkedIn) { 
@@ -303,20 +307,24 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
 void shootProton () {
   if (protonCannonCountdown<1) {
     protonCannon=protonCannonNeutral;
-    protonCannonCountdown=5;
+    protonCannonCountdown=8;
     currentCannon=0;
-    float relV=2*log((atomicNumber+9)/3);
+    //float relV=2*log((atomicNumber+9)/3);
+    float relV=3;
     new Proton (-width/(2*zoomLevel)+25, height/(2*zoomLevel)-54, relV, -relV*(height)/width);
   }
 }
 
 void shootNeutron () {
   if (neutronCannonCountdown<1) {
+    printIfDebugging("shootNeutron called");
     neutronCannon=neutronCannonNeutral;
-    neutronCannonCountdown=5;
+    neutronCannonCountdown=8;
     currentCannon=1;
-    float relV=2*log((atomicNumber+9)/3);
+    //float relV=2*log((atomicNumber+9)/3);
+    float relV=3;
     new Neutron (width/(2*zoomLevel)-44, height/(2*zoomLevel)-54, -relV, -relV*(height)/width);
+    printIfDebugging("Neutron may have been created?");
   }
 }
 
@@ -325,11 +333,11 @@ void keyPressed() {
   paused=false;
   loop();
   if (key=='p') {
-    printIfDebugging("key p pressed");
+    // printIfDebugging("key p pressed");
     protonCannon=protonCannonDown;
   }
   if (key=='n') {
-    printIfDebugging("key n pressed");
+    // printIfDebugging("key n pressed");
     neutronCannon=neutronCannonDown;
   }
   if (key=='h') {
@@ -429,52 +437,52 @@ void loadData() {
     }    // End Java-only bit
   }
   else {
-    // JavaScript-only routine for reading and parsing files 
-    /* String[] namesAndSymbols=loadStrings("elementnames.tsv");
-     printIfDebugging(namesAndSymbols[0]);
-     for (int i=0; i<namesAndSymbols.length; i++) {
-     String[] thisLine=splitTokens(namesAndSymbols[i]);
-     printIfDebugging(thisLine[0]+ ", "+thisLine[1]+", "+thisLine[2]+", "+thisLine[3]);
-     elementNames[i+1]=thisLine[2];
-     elementSymbols[i+1]=thisLine[3];
-     }
-     String[] nuclides=loadStrings("halflives.tsv");
-     halfLives=new float[178][178];
-     decayModes=new String[178][178];  
-     decayTypes=new int[178][178];  
-     for (int i=1; i<nuclides.length; i++) {
-     String[] thisLine=splitTokens(nuclides[i]);
-     int protonCount=thisLine[0];
-     int neutronCount=thisLine[1];
-     float halfLife=thisLine[2];
-     if (isNaN(parseFloat(halfLife))|halfLife==0) { 
-     halfLife=100000000000;
-     } 
-     printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
-     halfLives[protonCount][neutronCount]=halfLife;
-     String decayMode=thisLine[3];
-     decayModes[protonCount][neutronCount]=decayMode;
-     printIfDebugging ("decayMode "+decayMode);
-     if (decayMode.charAt(0)=='A') { 
-     decayTypes[protonCount][neutronCount]=HELIUM;
-     }
-     else if (decayMode.charAt(0)=='E') { 
-     decayTypes[protonCount][neutronCount]=POSITRON;
-     }
-     else if (decayMode.charAt(0)=='B') { 
-     decayTypes[protonCount][neutronCount]=ELECTRON;
-     }
-     else if (decayMode.charAt(0)=='P') { 
-     decayTypes[protonCount][neutronCount]=PROTON;
-     }
-     else if (decayMode.charAt(0)=='N') { 
-     decayTypes[protonCount][neutronCount]=NEUTRON;
-     }
-     else { 
-     decayTypes[protonCount][neutronCount]=UNKNOWN;
-     }
-     printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
-     } */    // End JS-only bit
+    // JavaScript-only routine for reading and parsing files
+    String[] namesAndSymbols=loadStrings("elementnames.tsv");
+    printIfDebugging(namesAndSymbols[0]);
+    for (int i=0; i<namesAndSymbols.length; i++) {
+      String[] thisLine=splitTokens(namesAndSymbols[i]);
+      printIfDebugging(thisLine[0]+ ", "+thisLine[1]+", "+thisLine[2]+", "+thisLine[3]);
+      elementNames[i+1]=thisLine[2];
+      elementSymbols[i+1]=thisLine[3];
+    }
+    String[] nuclides=loadStrings("halflives.tsv");
+    halfLives=new float[178][178];
+    decayModes=new String[178][178];
+    decayTypes=new int[178][178];
+    for (int i=1; i<nuclides.length; i++) {
+      String[] thisLine=splitTokens(nuclides[i]);
+      int protonCount=thisLine[0];
+      int neutronCount=thisLine[1];
+      float halfLife=thisLine[2];
+      if (isNaN(parseFloat(halfLife))|halfLife==0) {
+        halfLife=100000000000;
+      }
+      printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
+      halfLives[protonCount][neutronCount]=halfLife;
+      String decayMode=thisLine[3];
+      decayModes[protonCount][neutronCount]=decayMode;
+      printIfDebugging ("decayMode "+decayMode);
+      if (decayMode.charAt(0)=='A') {
+        decayTypes[protonCount][neutronCount]=HELIUM;
+      }
+      else if (decayMode.charAt(0)=='E') {
+        decayTypes[protonCount][neutronCount]=POSITRON;
+      }
+      else if (decayMode.charAt(0)=='B') {
+        decayTypes[protonCount][neutronCount]=ELECTRON;
+      }
+      else if (decayMode.charAt(0)=='P') {
+        decayTypes[protonCount][neutronCount]=PROTON;
+      }
+      else if (decayMode.charAt(0)=='N') {
+        decayTypes[protonCount][neutronCount]=NEUTRON;
+      }
+      else {
+        decayTypes[protonCount][neutronCount]=UNKNOWN;
+      }
+      printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
+    } // End JS-only bit
   }
 }
 

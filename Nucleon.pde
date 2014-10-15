@@ -36,7 +36,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
       //printIfDebugging("BYEBYE FORCE");
     }
     if (this.mood==OHNOEZ | that.mood==OHNOEZ) {
-      attractionMultiplier*=0.6;
+      attractionMultiplier*=0.8;
     }
 
     if (distSq<10) {
@@ -75,8 +75,8 @@ class Nucleon extends Particle { // It's possible this should be an interface
           that.moodTime=10;
         }
         //printIfDebugging("Attracting: Particle 1 at "+particle1.velocity.x+", "+particle1.velocity.y+" and 2 at "+particle2.velocity.x+", "+particle2.velocity.y);
-      } 
-      else {
+      }
+      else { // distSq<0.6
         PVector collisionPoint=new PVector((this.position.x+that.position.x)/2, (this.position.y+that.position.y)/2);
         PVector thisVector=PVector.sub(this.position, collisionPoint);
         float thisDistance=thisVector.mag();

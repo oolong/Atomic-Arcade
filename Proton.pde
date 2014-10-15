@@ -1,10 +1,7 @@
 class Proton extends Nucleon {
   Proton (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
-    this.sprite=new PImage[6];
-    for (int i=0; i<6; i++) {
-      this.sprite[i]=protonImages[i];
-    }
+    this.sprite=protonImages;
     this.charge=1;
     printIfDebugging("Proton mood on creation: "+this.mood+" x="+this.position.x+" y="+this.position.y);
   }
