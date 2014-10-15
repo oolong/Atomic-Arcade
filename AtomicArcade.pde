@@ -28,7 +28,7 @@ int[] overallMood = {
 };
 PImage backgroundImage, helpScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon;
 PImage[] protonImages, neutronImages;
-boolean debugging=true, java=false, paused=false;
+boolean debugging=false, java=false, paused=false;
 
 void setup () {
   size(512, 600);

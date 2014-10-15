@@ -13,7 +13,7 @@ class Particle {
     this.position=new PVector (x, y);
     this.velocity=new PVector (vx, vy);
     this.sprite=new PImage[1];
-    this.sprite[0]=loadImage("default.gif");
+    //this.sprite[0]=loadImage("default.gif");
     this.particleIndex=particlesMade;
     particlesMade++;
     printIfDebugging("particlesMade="+particlesMade);
