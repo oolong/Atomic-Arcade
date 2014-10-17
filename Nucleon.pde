@@ -1,8 +1,7 @@
 class Nucleon extends Particle { // It's possible this should be an interface
-  boolean fixed=false;
+  boolean fixed=false, doomed=false;
   int mood, moodTime;
   float diameter;
-  float vibrate=2;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
     mood=WHEEE; // A split second's excitement on entry
@@ -98,7 +97,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
     super.updatePosition();
     if (this.mood==OHNOEZ && this!=protonOne) {
       this.position.x+=vibrate;
-      vibrate=-vibrate;
+      vibrate*=-1;
     }
   }
 }

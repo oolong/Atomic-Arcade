@@ -1,8 +1,9 @@
-/* @pjs preload="circle-32.png, helpPageWeb.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
+/* @pjs preload="circle-32.png, start-page.jpg, pause-page.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
  */
 
 Nucleon[] nucleons;
 Nucleon[] doomed;
+String[] halfLifeList; // To store half-life information.
 float doomTime=1666;
 float em=0.5; // Strength of the electromagnetic force
 Proton protonOne;
@@ -11,9 +12,9 @@ float[] nuclearAttraction= {
 }; // Neutron-neutron, proton-neutron, proton-proton nuclear force strength
 float nuclearRepulsion=0.8;
 float nucleonDiameter=30;
-float damping=0.99;
+float damping=0.99, vibrate=2;
 int atomicNumber=0, neutrons=0, killList=0;
-int atomicMass=0, nucleonCount=0, particlesMade=0;
+int atomicMass=0, nucleonCount=0, particlesMade=0, halfLifeCounter=100;
 int neutronCannonCountdown=0, protonCannonCountdown=0, currentCannon=0;
 final int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
 final int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
@@ -26,23 +27,28 @@ String[] elementSymbols;
 int[] overallMood = { 
   0, 0
 };
-PImage backgroundImage, helpScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon;
+PImage backgroundImage, startScreen, pauseScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon, pauseButton;
 PImage[] protonImages, neutronImages;
-boolean debugging=false, java=false, paused=false;
+boolean debugging=false, java=false, paused=true;
 
 void setup () {
-  size(512, 600);
+  size(512, 640);
   colorMode(RGB, 256);
   ellipseMode(CORNER);
-  //orientation(LANDSCAPE);
+  //orientation(PORTRAIT);
   frameRate(30);
-  helpScreen=loadImage("helpPageWeb.jpg");
-  background (helpScreen);
+  printIfDebugging("setup started");
+  startScreen=loadImage("start-page.jpg");
+  pauseScreen=loadImage("pause-page.jpg");
+  //background (startScreen);
+  image (startScreen, 0, 0, width, height);
+  redraw();
   noLoop();
   nucleons=new Nucleon[300];
   doomed=new Nucleon[16];
   backgroundImage=loadImage("background-for-web-demo.jpg");
   elementPad=loadImage("element-pad.png");
+  pauseButton=loadImage("pause.png");
   protonImages=new PImage[7];
   neutronImages=new PImage[7];
   for (int i=0; i<6; i++) {
@@ -61,7 +67,7 @@ void setup () {
   elementSymbols=new String[119];
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
-  protonOne=new Proton(0, 0, 0, 0);
+  reset();
   loadData(); // Note that this method needs commenting or uncommenting depending on mode
   printIfDebugging("setup complete - nucleonCount="+nucleonCount);
   //redraw();
@@ -75,14 +81,25 @@ void draw () {
    * adjusting all positions
    */
 
+
   if (paused) {
-    background(helpScreen);
-    image(helpScreen, 0, 0);
-    //printIfDebugging("Paused why is it paused wth");
+    //    background(startScreen);
+    if (frameCount<2) {
+      image(startScreen, 0, 0, width, height);
+    }
+    else {
+      image(pauseScreen, 0, 0, width, height);
+    }
+    printIfDebugging("Paused but draw() called anyway");
   }
   else {
+    if (!java && halfLifeCounter<6000) {
+      getHalfLife(halfLifeCounter);
+      halfLifeCounter+=1;
+    }
     //printIfDebugging("Not paused");
-    background (backgroundImage);
+    //background (backgroundImage);
+    image (backgroundImage, 0, 0, width, height);
     pushMatrix();
     translate(width/2, height/2);
     if (atomicMass>39 && atomicMass<119 && zoomLevel>1) {
@@ -112,20 +129,14 @@ void draw () {
       }
     }
 
-    // Point at which IDE fucked right up
-
 
     for (int i=0; i<nucleonCount; i++) { // Position and mood updating  loop
       if (nucleons[i].active) {
         Nucleon thisNucleon=nucleons[i];
         thisNucleon.updatePosition();
-        if (millis()>doomTime+2000 && thisNucleon.mood==OHNOEZ) {
+        if (millis()>doomTime+2000 && thisNucleon.mood==OHNOEZ) { // Two seconds of vibratory grace
           thisNucleon.mood=BYEBYE;
           thisNucleon.moodTime=2000;
-        }
-        if (millis()<doomTime+1000 && thisNucleon.mood==BYEBYE) {
-          thisNucleon.mood=WHEEE;
-          thisNucleon.moodTime=500;
         }
         if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
         else if (thisNucleon.linkedIn) { 
@@ -189,10 +200,10 @@ void draw () {
       // Announce new element if (atomicNumber!=oldAtomicNumber)
       // Here we establish how happy the protons and neutrons should be, and if one of them needs to decay
       int newMood=SMILE;
-      if (halfLives[atomicNumber][neutrons]<5) {
+      if (halfLives[atomicNumber][neutrons]<5) { // Half-life of just a few seconds
         newMood=CONCERN;
       }
-      else if (halfLives[atomicNumber][neutrons]<15) {
+      else if (halfLives[atomicNumber][neutrons]<10000) { // Not *so* unstable
         newMood=FROWN;
       }
       else { //
@@ -203,26 +214,37 @@ void draw () {
       printIfDebugging("Doom will be in "+(doomTime-millis())+" milliseconds");
       printIfDebugging("millis now="+millis());
       killList=0;
+      for (int i=0; i<nucleonCount; i++) { // No nucleons should stay doomed
+        nucleons[i].doomed=false;
+        if (nucleons[i].mood==OHNOEZ || nucleons[i].mood==BYEBYE) { // OMG THE RELIEF
+          nucleons[i].mood=WHEEE;
+          nucleons[i].moodTime=500;
+        }
+      }
+
       if (decayTypes[atomicNumber][neutrons]==NEUTRON|decayTypes[atomicNumber][neutrons]==ELECTRON) {
         overallMood[0]=newMood;
         overallMood[1]=SMILE;
         doomed[0]=chooseNucleon(0);
-        killList=1;
+        doomed[0].doomed=true;
       }
       else if (decayTypes[atomicNumber][neutrons]==PROTON|decayTypes[atomicNumber][neutrons]==POSITRON) {
         overallMood[1]=newMood;
         overallMood[0]=SMILE;
         doomed[0]=chooseNucleon(1);
-        killList=1;
+        doomed[0].doomed=true;
       }
-      else if (decayTypes[atomicNumber][neutrons]==HELIUM) {
+      else if (decayTypes[atomicNumber][neutrons]==HELIUM||decayTypes[atomicNumber][neutrons]==UNKNOWN) { // Assume alpha decay if unknown.
         overallMood[1]=newMood;
         overallMood[0]=newMood;
         doomed[0]=chooseNucleon(0);
         doomed[1]=chooseNucleon(1);
         doomed[2]=chooseNucleon(0);
         doomed[3]=chooseNucleon(1);
-        killList=4;
+        doomed[0].doomed=true;
+        doomed[1].doomed=true;
+        doomed[2].doomed=true;
+        doomed[3].doomed=true;
       }
       else {         // If all else fails, smile
         overallMood[1]=SMILE;
@@ -247,14 +269,13 @@ void draw () {
     else {
       text("Xx", 0, 20);
     }
-    textSize(16);
+    textSize(20);
     textAlign(RIGHT);
-    text(atomicNumber, 32, 72);
+    text(atomicNumber, 32, 64);
     text(atomicMass, 32, 100);
     textAlign(CENTER);
-    textSize(18);
     if (elementNames[atomicNumber].length()>10) {
-      textSize(14);
+      textSize(180/elementNames[atomicNumber].length());
     }
     text(elementNames[atomicNumber], 60, 122);
     popMatrix();
@@ -282,26 +303,45 @@ void draw () {
     }
     image(protonCannon, 0, height-120, 120, 120);
     image(neutronCannon, width-120, height-120, 120, 120);
+    image(pauseButton, 20, 20, 40, 60);
     //printIfDebugging(decayModes[atomicNumber][neutrons]);
-    //text("Decay mode: "+decayModes[atomicNumber][neutrons], 10, 50);
-    //text("Halflife: "+halfLives[atomicNumber][neutrons], 10, 70);
+    textAlign(LEFT);
+    text("Decay mode: "+decayModes[atomicNumber][neutrons], 10, 50);
+    text("Halflife: "+halfLives[atomicNumber][neutrons], 10, 70);
   }
 }
 Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from the centre, or the nearest to the latest already-doomed nucleon
-  float greatestDistance=0;
   Nucleon currentNucleon;
-  Nucleon furthestNucleon=protonOne;
-  for (int i=0; i<nucleonCount; i++) {
-    currentNucleon=nucleons[i];
-    if (currentNucleon.charge==charge) { // Find the furthest one
-      float distance=sqrt(currentNucleon.position.x*currentNucleon.position.x + currentNucleon.position.y*currentNucleon.position.y);
-      if (distance>greatestDistance) {
-        greatestDistance=distance;
-        furthestNucleon=currentNucleon;
+  Nucleon chosenNucleon=protonOne;
+  if (killList==0) { // If the kill list is empty, choose furthest from centre
+    float greatestDistance=0;
+    for (int i=0; i<nucleonCount; i++) {
+      currentNucleon=nucleons[i];
+      if (currentNucleon.charge==charge) { // Find the furthest one
+        float distance=sqrt(currentNucleon.position.x*currentNucleon.position.x + currentNucleon.position.y*currentNucleon.position.y);
+        if (distance>greatestDistance) {
+          greatestDistance=distance;
+          chosenNucleon=currentNucleon;
+        }
       }
     }
   }
-  return furthestNucleon;
+  else {  // If there are already items in the kill list, we're finding nearby nucleons
+    float smallestDistance=1000000;
+    for (int i=0; i<nucleonCount; i++) {
+      currentNucleon=nucleons[i];
+      if (currentNucleon.charge==charge) { // Find the furthest one
+        float distance=sqrt(sq(currentNucleon.position.x-doomed[killList-1].position.x) + sq(currentNucleon.position.y-doomed[killList-1].position.y));
+        if (distance<smallestDistance && !currentNucleon.doomed) {
+          smallestDistance=distance;
+          chosenNucleon=currentNucleon;
+        }
+      }
+    }
+  }
+
+  killList++;
+  return chosenNucleon;
 }
 
 void shootProton () {
@@ -330,8 +370,6 @@ void shootNeutron () {
 
 
 void keyPressed() {
-  paused=false;
-  loop();
   if (key=='p') {
     // printIfDebugging("key p pressed");
     protonCannon=protonCannonDown;
@@ -340,11 +378,16 @@ void keyPressed() {
     // printIfDebugging("key n pressed");
     neutronCannon=neutronCannonDown;
   }
-  if (key=='h') {
+  if (key=='h' && paused==false) {
     paused=true;
-    background(helpScreen);
+    //background(startScreen);
+    image(pauseScreen, 0, 0, width, height);
     noLoop();
     redraw();
+  }
+  else {
+    paused=false;
+    loop();
   }
 }
 
@@ -360,23 +403,33 @@ void keyReleased() {
   }
   if (key=='r') {
     printIfDebugging("key r pressed");
-    for (int i=0; i<nucleonCount; i++) {
-      nucleons[i].active=false;
-    }
-    protonOne=new Proton(0, 0, 0, 0);
+    reset();
   }
 }
 
 
 void mouseReleased() {
-  paused=false;
-  loop();
-  printIfDebugging("paused="+paused);
-  if (mouseX<width/2) {
-    shootProton();
+  if (paused) {
+    if (mouseY>height*0.8 && mouseX<width*0.5) {
+      reset();
+    }
+    paused=false;
+    loop();
   }
   else {
-    shootNeutron();
+    printIfDebugging("paused="+paused);
+    if (mouseY<100) {
+      image(pauseScreen, 0, 0, width, height);
+      noLoop();
+      redraw();
+      paused=true;
+    }
+    else if (mouseX<width/2) {
+      shootProton();
+    }
+    else if (mouseX>width/2) {
+      shootNeutron();
+    }
   }
 }
 
@@ -385,43 +438,57 @@ void printIfDebugging (String message) {
   if (debugging) println(message);
 }
 
+void reset() {
+  for (int i=0; i<nucleons.length; i++) {
+    nucleons[i]=null;
+  }
+  nucleonCount=0;
+  protonOne=new Proton(0, 0, 0, 0);
+}
+
 void loadData() {
+  halfLives=new float[178][178];
+  decayModes=new String[178][178];  
+  decayTypes=new int[178][178];  
   if (java) {
     Table nuclides=loadTable("halflives.tsv", "header");
-    halfLives=new float[178][178];
-    decayModes=new String[178][178];  
-    decayTypes=new int[178][178];  
     for (int i=0; i<nuclides.getRowCount(); i++) {
       int protonCount=nuclides.getInt(i, 0);
       int neutronCount=nuclides.getInt(i, 1);
-      float halfLife=0.1*log(nuclides.getFloat(i, 2)); // We're taking the natural logarithm of the real halflife to bring things into human timescales
+      float halfLife=nuclides.getFloat(i, 2); // We're taking the natural logarithm of the real halflife to bring things into human timescales
 
-      if (halfLife<0.1) halfLife=1;
+      //if (halfLife<0.1) halfLife=1;
       if (Float.isNaN(halfLife)) { 
-        printIfDebugging("That's not a number!");
-        halfLife=Float.MAX_VALUE;
+        printIfDebugging("That's not a number: "+nuclides.getString(i, 2));
+        if (nuclides.getString(i, 2).equals("infinity")) {
+          halfLife=Float.MAX_VALUE;
+          printIfDebugging("It's infinity.");
+        }
+        else {
+          halfLife=0;
+        }
       } 
       printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
       halfLives[protonCount][neutronCount]=halfLife;
       String decayMode=nuclides.getString(i, 3);
       if (decayModes[protonCount][neutronCount]==null) decayModes[protonCount][neutronCount]=decayMode;
-      if (decayMode.charAt(0)=='A') { 
-        decayTypes[protonCount][neutronCount]=HELIUM;
-      }
-      else if (decayMode.charAt(0)=='E') { 
-        decayTypes[protonCount][neutronCount]=POSITRON;
-      }
-      else if (decayMode.charAt(0)=='B') { 
-        decayTypes[protonCount][neutronCount]=ELECTRON;
-      }
-      else if (decayMode.charAt(0)=='P') { 
-        decayTypes[protonCount][neutronCount]=PROTON;
-      }
-      else if (decayMode.charAt(0)=='N') { 
-        decayTypes[protonCount][neutronCount]=NEUTRON;
-      }
-      else { 
-        decayTypes[protonCount][neutronCount]=UNKNOWN;
+      decayTypes[protonCount][neutronCount]=UNKNOWN;
+      if (decayMode!=null) {
+        if (decayMode.charAt(0)=='A') { 
+          decayTypes[protonCount][neutronCount]=HELIUM;
+        }
+        else if (decayMode.charAt(0)=='E') { 
+          decayTypes[protonCount][neutronCount]=POSITRON;
+        }
+        else if (decayMode.charAt(0)=='B') { 
+          decayTypes[protonCount][neutronCount]=ELECTRON;
+        }
+        else if (decayMode.charAt(0)=='P') { 
+          decayTypes[protonCount][neutronCount]=PROTON;
+        }
+        else if (decayMode.charAt(0)=='N') { 
+          decayTypes[protonCount][neutronCount]=NEUTRON;
+        }
       }
       printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
     }
@@ -438,6 +505,7 @@ void loadData() {
   }
   else {
     // JavaScript-only routine for reading and parsing files
+    redraw();
     String[] namesAndSymbols=loadStrings("elementnames.tsv");
     printIfDebugging(namesAndSymbols[0]);
     for (int i=0; i<namesAndSymbols.length; i++) {
@@ -446,43 +514,68 @@ void loadData() {
       elementNames[i+1]=thisLine[2];
       elementSymbols[i+1]=thisLine[3];
     }
-    String[] nuclides=loadStrings("halflives.tsv");
+    halfLifeList=loadStrings("halflives.tsv");
+    printIfDebugging("Got halfLifeList. Length: "+halfLifeList.length);
     halfLives=new float[178][178];
-    decayModes=new String[178][178];
+    printIfDebugging("Now to parse those halflives. First line is "+halfLifeList[0]);
     decayTypes=new int[178][178];
-    for (int i=1; i<nuclides.length; i++) {
-      String[] thisLine=splitTokens(nuclides[i]);
-      int protonCount=thisLine[0];
-      int neutronCount=thisLine[1];
-      float halfLife=thisLine[2];
-      if (isNaN(parseFloat(halfLife))|halfLife==0) {
-        halfLife=100000000000;
-      }
-      printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
-      halfLives[protonCount][neutronCount]=halfLife;
-      String decayMode=thisLine[3];
-      decayModes[protonCount][neutronCount]=decayMode;
-      printIfDebugging ("decayMode "+decayMode);
-      if (decayMode.charAt(0)=='A') {
-        decayTypes[protonCount][neutronCount]=HELIUM;
-      }
-      else if (decayMode.charAt(0)=='E') {
-        decayTypes[protonCount][neutronCount]=POSITRON;
-      }
-      else if (decayMode.charAt(0)=='B') {
-        decayTypes[protonCount][neutronCount]=ELECTRON;
-      }
-      else if (decayMode.charAt(0)=='P') {
-        decayTypes[protonCount][neutronCount]=PROTON;
-      }
-      else if (decayMode.charAt(0)=='N') {
-        decayTypes[protonCount][neutronCount]=NEUTRON;
-      }
-      else {
-        decayTypes[protonCount][neutronCount]=UNKNOWN;
-      }
-      printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
-    } // End JS-only bit
+    for (int i=1; i<100 ; i++) {
+      getHalfLife(i);
+    }
+
+    // End JS-only bit
   }
+}
+
+void getHalfLife(int i) {
+  //    for (int i=1; i<nuclides.length; i++) {
+  //if (i==nuclides.length-1) printIfDebugging("Decay-parsing loop "+i+" of "+nuclides.length);
+  String[] thisLine=splitTokens(halfLifeList[i]);
+  int protonCount=thisLine[0];
+  int neutronCount=thisLine[1];
+  float halfLife=thisLine[2];
+  if (isNaN(parseFloat(halfLife))) {
+    halfLife=10000000;
+    printIfDebugging("Let's just pretend ten million is really infinity");
+  }
+  printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
+  halfLives[protonCount][neutronCount]=halfLife;
+  //      String decayMode=thisLine[3];
+  //      String decayMode="A";
+  if (thisLine.length<4) {
+    decayMode="Ah";
+    printIfDebugging("thisLine.length<4");
+  }
+  else {
+    decayMode=thisLine[3];
+    printIfDebugging("thisLine.length>4");
+  }
+  printIfDebugging("thisLine.length="+thisLine.length);
+  //decayMode="WTF";//decayMode;
+  printIfDebugging ("decayMode="+decayMode);
+
+  decayModes[protonCount][neutronCount]=decayMode;
+
+  if (decayMode.charAt(0)=="A") { 
+    printIfDebugging ("A");
+    decayTypes[protonCount][neutronCount]=HELIUM;
+  }
+  else if (decayMode.charAt(0)=="E") {
+    decayTypes[protonCount][neutronCount]=POSITRON;
+  }
+  else if (decayMode.charAt(0)=="B") {
+    decayTypes[protonCount][neutronCount]=ELECTRON;
+    printIfDebugging ("decayType diagnosed from 'B'");
+  }
+  else if (decayMode.charAt(0)=="P") {
+    decayTypes[protonCount][neutronCount]=PROTON;
+  }
+  else if (decayMode.charAt(0)=="N") {
+    decayTypes[protonCount][neutronCount]=NEUTRON;
+  }
+  else {
+    decayTypes[protonCount][neutronCount]=UNKNOWN;
+  }
+  printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
 }
 
