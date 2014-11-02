@@ -34,7 +34,7 @@ class Particle {
   }
 
   void drawSprite() {
-    image(sprite[0].get(), position.x, position.y, 30, 30);
+    image(sprite[0].get(), position.x, position.y);
   }
 }
 

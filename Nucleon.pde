@@ -1,6 +1,6 @@
 class Nucleon extends Particle { // It's possible this should be an interface
-  boolean fixed=false, doomed=false;
-  int mood, moodTime;
+  boolean fixed=false;
+  int mood, moodTime, doomLevel=0;
   float diameter;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
@@ -86,12 +86,12 @@ class Nucleon extends Particle { // It's possible this should be an interface
   }
   void drawSprite() {
     //printIfDebugging("Mood="+mood);
-    image(sprite[mood], position.x, position.y, 30, 30);
+    image(sprite[mood], position.x, position.y);
   }
   void drawShadow() {
     noStroke();
     fill(0, 64);
-    ellipse(position.x-5, position.y+5, 27, 27);
+    ellipse(position.x-5, position.y+5, 36, 36);
   }
   void updatePosition() {
     super.updatePosition();

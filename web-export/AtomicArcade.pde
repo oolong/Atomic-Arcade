@@ -215,7 +215,7 @@ void draw () {
       printIfDebugging("millis now="+millis());
       killList=0;
       for (int i=0; i<nucleonCount; i++) { // No nucleons should stay doomed
-        nucleons[i].doomed=false;
+        nucleons[i].doomLevel=0;
         if (nucleons[i].mood==OHNOEZ || nucleons[i].mood==BYEBYE) { // OMG THE RELIEF
           nucleons[i].mood=WHEEE;
           nucleons[i].moodTime=500;
@@ -226,13 +226,11 @@ void draw () {
         overallMood[0]=newMood;
         overallMood[1]=SMILE;
         doomed[0]=chooseNucleon(0);
-        doomed[0].doomed=true;
       }
       else if (decayTypes[atomicNumber][neutrons]==PROTON|decayTypes[atomicNumber][neutrons]==POSITRON) {
         overallMood[1]=newMood;
         overallMood[0]=SMILE;
         doomed[0]=chooseNucleon(1);
-        doomed[0].doomed=true;
       }
       else if (decayTypes[atomicNumber][neutrons]==HELIUM||decayTypes[atomicNumber][neutrons]==UNKNOWN) { // Assume alpha decay if unknown.
         overallMood[1]=newMood;
@@ -241,10 +239,6 @@ void draw () {
         doomed[1]=chooseNucleon(1);
         doomed[2]=chooseNucleon(0);
         doomed[3]=chooseNucleon(1);
-        doomed[0].doomed=true;
-        doomed[1].doomed=true;
-        doomed[2].doomed=true;
-        doomed[3].doomed=true;
       }
       else {         // If all else fails, smile
         overallMood[1]=SMILE;
@@ -313,26 +307,31 @@ void draw () {
 Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from the centre, or the nearest to the latest already-doomed nucleon
   Nucleon currentNucleon;
   Nucleon chosenNucleon=protonOne;
-  if (killList==0) { // If the kill list is empty, choose furthest from centre
+  if (killList==0) { // If the kill list is empty, choose second-furthest from centre
     float greatestDistance=0;
+    Nucleon furthestNucleon=protonOne;
     for (int i=0; i<nucleonCount; i++) {
       currentNucleon=nucleons[i];
-      if (currentNucleon.charge==charge) { // Find the furthest one
+      if (currentNucleon.charge==charge) { // Find the second-furthest one
         float distance=sqrt(currentNucleon.position.x*currentNucleon.position.x + currentNucleon.position.y*currentNucleon.position.y);
-        if (distance>greatestDistance) {
+        if (distance>greatestDistance && currentNucleon.doomLevel==0) {
           greatestDistance=distance;
-          chosenNucleon=currentNucleon;
+          chosenNucleon=furthestNucleon; // Second-furthest, now
+          furthestNucleon=currentNucleon; 
         }
       }
+    }
+    if (chosenNucleon==protonOne) {
+      chosenNucleon=furthestNucleon;
     }
   }
   else {  // If there are already items in the kill list, we're finding nearby nucleons
     float smallestDistance=1000000;
     for (int i=0; i<nucleonCount; i++) {
       currentNucleon=nucleons[i];
-      if (currentNucleon.charge==charge) { // Find the furthest one
+      if (currentNucleon.charge==charge) { // Find the nearest one
         float distance=sqrt(sq(currentNucleon.position.x-doomed[killList-1].position.x) + sq(currentNucleon.position.y-doomed[killList-1].position.y));
-        if (distance<smallestDistance && !currentNucleon.doomed) {
+        if (distance<smallestDistance && currentNucleon.doomLevel==0) {
           smallestDistance=distance;
           chosenNucleon=currentNucleon;
         }
@@ -341,6 +340,7 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
   }
 
   killList++;
+  chosenNucleon.doomLevel=1;
   return chosenNucleon;
 }
 
@@ -531,17 +531,17 @@ void getHalfLife(int i) {
   //    for (int i=1; i<nuclides.length; i++) {
   //if (i==nuclides.length-1) printIfDebugging("Decay-parsing loop "+i+" of "+nuclides.length);
   String[] thisLine=splitTokens(halfLifeList[i]);
-  int protonCount=thisLine[0];
-  int neutronCount=thisLine[1];
-  float halfLife=thisLine[2];
-  if (isNaN(parseFloat(halfLife))) {
+  int protonCount=parseInt(thisLine[0]);
+  int neutronCount=parseInt(thisLine[1]);
+  float halfLife=parseInt(thisLine[2]);
+  if (thisLine[2]=="infinity") {
     halfLife=10000000;
     printIfDebugging("Let's just pretend ten million is really infinity");
   }
   printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
   halfLives[protonCount][neutronCount]=halfLife;
   //      String decayMode=thisLine[3];
-  //      String decayMode="A";
+        String decayMode="A";
   if (thisLine.length<4) {
     decayMode="Ah";
     printIfDebugging("thisLine.length<4");
@@ -579,6 +579,7 @@ void getHalfLife(int i) {
   printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
 }
 
+
 class Electron extends Particle {
   // May not need anything much added besides the right sprite.
   Electron (float x, float y, float vx, float vy){
@@ -597,8 +598,8 @@ class Neutron extends Nucleon {
 }  
 
 class Nucleon extends Particle { // It's possible this should be an interface
-  boolean fixed=false, doomed=false;
-  int mood, moodTime;
+  boolean fixed=false;
+  int mood, moodTime, doomLevel=0;
   float diameter;
   Nucleon (float x, float y, float vx, float vy) {
     super (x, y, vx, vy);
@@ -684,12 +685,12 @@ class Nucleon extends Particle { // It's possible this should be an interface
   }
   void drawSprite() {
     //printIfDebugging("Mood="+mood);
-    image(sprite[mood], position.x, position.y, 30, 30);
+    image(sprite[mood], position.x, position.y);
   }
   void drawShadow() {
     noStroke();
     fill(0, 64);
-    ellipse(position.x-5, position.y+5, 27, 27);
+    ellipse(position.x-5, position.y+5, 36, 36);
   }
   void updatePosition() {
     super.updatePosition();
@@ -736,7 +737,7 @@ class Particle {
   }
 
   void drawSprite() {
-    image(sprite[0].get(), position.x, position.y, 30, 30);
+    image(sprite[0].get(), position.x, position.y);
   }
 }
 
