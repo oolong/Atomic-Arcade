@@ -7,7 +7,7 @@ import ddf.minim.*;
 Nucleon[] nucleons;
 Nucleon[] doomed;
 String[] halfLifeList; // To store half-life information.
-String announcement="";
+String announcement="It all starts with hydrogen";
 float doomTime=1666;
 float em=0.5; // Strength of the electromagnetic force
 Proton protonOne;
@@ -91,7 +91,8 @@ void setup () {
     elementSounds=new AudioSample[119];
     elementSounds[1]=minim.loadSample("sounds/1-1.mp3");
     for (int i=2; i<30; i++) { // Need all files to exist or this bit bugs out
-      // elementSounds[i]=minim.loadSample(i+".mp3", 512);
+       elementSounds[i]=minim.loadSample("sounds/"+i+".mp3", 512);
+       printIfDebugging("Element loaded: "+i);
     }
   }
 
@@ -222,6 +223,7 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
       if (elementMade[atomicNumber]==false) {
         announcement="You made "+elementNames[atomicNumber]+"!";
         elementMade[atomicNumber]=true;
+        elementSounds[atomicNumber].trigger();
       }
       if (halfLives[atomicNumber][neutrons]<5) { // Half-life of just a few seconds
         newMood=CONCERN;
