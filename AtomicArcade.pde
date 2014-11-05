@@ -7,7 +7,7 @@ import ddf.minim.*;
 Nucleon[] nucleons;
 Nucleon[] doomed;
 String[] halfLifeList; // To store half-life information.
-String announcement="It all starts with hydrogen";
+String announcement="It all starts with hydrogen.";
 float doomTime=1666;
 float em=0.5; // Strength of the electromagnetic force
 Proton protonOne;
@@ -17,7 +17,7 @@ float[] nuclearAttraction= {
 float nuclearRepulsion=0.8;
 float nucleonDiameter=36;
 float damping=0.99, vibrate=2;
-int atomicNumber=0, neutrons=0, killList=0;
+int atomicNumber=0, neutrons=0, killList=0, soundsLoaded=0;
 int atomicMass=0, nucleonCount=0, particlesMade=0, halfLifeCounter=100;
 int neutronCannonCountdown=0, protonCannonCountdown=0, currentCannon=0;
 final int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
@@ -39,10 +39,10 @@ PImage[] protonImages, neutronImages;
 Minim minim;
 AudioSample pop, pop2;
 
-boolean debugging=false, java=true, paused=true;
+boolean debugging=true, java=true, paused=true;
 
 void setup () {
-  size(512, 640);
+  size(480, 640);
   colorMode(RGB, 256);
   ellipseMode(CORNER);
   //orientation(PORTRAIT);
@@ -89,10 +89,11 @@ void setup () {
     pop = minim.loadSample("pop.mp3", 512);
     pop2 = minim.loadSample("pop2.mp3", 512);
     elementSounds=new AudioSample[119];
-    elementSounds[1]=minim.loadSample("sounds/1-1.mp3");
-    for (int i=2; i<30; i++) { // Need all files to exist or this bit bugs out
-       elementSounds[i]=minim.loadSample("sounds/"+i+".mp3", 512);
+    elementSounds[1]=minim.loadSample("mp3/1-1.mp3");
+    for (int i=2; i<4; i++) { // Need all files to exist or this bit bugs out
+       elementSounds[i%4]=minim.loadSample("mp3/"+i+".mp3", 512);
        printIfDebugging("Element loaded: "+i);
+       soundsLoaded++;
     }
   }
 
@@ -223,7 +224,10 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
       if (elementMade[atomicNumber]==false) {
         announcement="You made "+elementNames[atomicNumber]+"!";
         elementMade[atomicNumber]=true;
-        elementSounds[atomicNumber].trigger();
+        //elementSounds[atomicNumber%10].trigger();
+        elementSounds[soundsLoaded%10]=minim.loadSample("mp3/"+soundsLoaded+".mp3", 512);
+        printIfDebugging("sound loaded: "+soundsLoaded+".mp3");
+        soundsLoaded++;
       }
       if (halfLives[atomicNumber][neutrons]<5) { // Half-life of just a few seconds
         newMood=CONCERN;
@@ -317,7 +321,7 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
     image(pauseButton, 20, 20, 40, 60);
     //printIfDebugging(decayModes[atomicNumber][neutrons]);
     textAlign(CENTER);
-    text(announcement, width/2, 42);
+    text(announcement, width/2-20, 54);
     //text("Decay mode: "+decayModes[atomicNumber][neutrons], 10, 50);
     //text("Halflife: "+halfLives[atomicNumber][neutrons], 10, 70);
   }
@@ -491,7 +495,7 @@ void loadData() {
       }
       printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
     }
-    Table namesAndSymbols=loadTable("elementnames.csv");
+    Table namesAndSymbols=loadTable("elementnames.tsv");
     for (int i=0; i<namesAndSymbols.getRowCount (); i++) {
       int protonCount=namesAndSymbols.getInt(i, 0);
       String name=namesAndSymbols.getString(i, 2);

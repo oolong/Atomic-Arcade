@@ -1,14 +1,14 @@
 Z  	N  	halflife           	decayMode
 0	1	610.98	B-      
-1	0	infinity                 	        
-1	1	infinity                 	        
+1	0	infinity
+1	1	infinity
 1	2	388800000	B-      
 1	3	                         	N       
 1	4	7.995E-023	2N      
 1	5	2.848E-022	N       
 1	6	9.152E-015	2N?     
-2	1	infinity                 	        
-2	2	infinity                 	        
+2	1	infinity
+2	2	infinity
 2	3	7.595E-022	A       
 2	3	7.595E-022	N       
 2	4	0.801	B-      
@@ -21,8 +21,8 @@ Z  	N  	halflife           	decayMode
 3	1	7.557E-023	P       
 3	2	3.038E-022	P       
 3	2	3.038E-022	A       
-3	3	infinity                 	        
-3	4	infinity                 	        
+3	3	infinity
+3	4	infinity
 3	5	0.84	B-      
 3	5	0.84	BA      
 3	6	0.178	B-      
@@ -39,7 +39,7 @@ Z  	N  	halflife           	decayMode
 4	2	4.953E-021	A       
 4	3	4599936	EC      
 4	4	8.181E-017	A       
-4	5	infinity                 	        
+4	5	infinity
 4	6	43770000000000	B-      
 4	7	13.81	B-      
 4	7	13.81	BA      
@@ -58,8 +58,8 @@ Z  	N  	halflife           	decayMode
 5	3	0.77	EA      
 5	4	8.439E-019	P       
 5	4	8.439E-019	2A      
-5	5	infinity                 	        
-5	6	infinity                 	        
+5	5	infinity
+5	6	infinity
 5	7	0.0202	B3A     
 5	7	0.0202	B-      
 5	8	0.0173	B-      
@@ -86,8 +86,8 @@ Z  	N  	halflife           	decayMode
 6	3	0.127	EC      
 6	4	19.308	EC      
 6	5	1220.04	EC      
-6	6	infinity                 	        
-6	7	infinity                 	        
+6	6	infinity
+6	7	infinity
 6	8	179900000000	B-      
 6	9	2.449	B-      
 6	10	0.747	B-      
@@ -109,8 +109,8 @@ Z  	N  	halflife           	decayMode
 7	4	5.49E-022	P       
 7	5	0.011	EC      
 7	6	597.9	EC      
-7	7	infinity                 	        
-7	8	infinity                 	        
+7	7	infinity
+7	8	infinity
 7	9	7.13	B-      
 7	9	7.13	BA      
 7	10	4.173	BN      
@@ -137,9 +137,9 @@ Z  	N  	halflife           	decayMode
 8	5	0.00858	EP      
 8	6	70.62	EC      
 8	7	122.24	EC      
-8	8	infinity                 	        
-8	9	infinity                 	        
-8	10	infinity                 	        
+8	8	infinity
+8	9	infinity
+8	10	infinity
 8	11	26.88	B-      
 8	12	13.51	B-      
 8	13	3.42	B-      
@@ -158,7 +158,7 @@ Z  	N  	halflife           	decayMode
 9	7	1.139E-020	P       
 9	8	64.49	EC      
 9	9	6586.2	EC      
-9	10	infinity                 	        
+9	10	infinity
 9	11	11.07	B-      
 9	12	4.158	B-      
 9	13	4.23	B-      
@@ -184,9 +184,9 @@ Z  	N  	halflife           	decayMode
 10	7	0.109	EA      
 10	8	1.667	EC      
 10	9	17.22	EC      
-10	10	infinity                 	        
-10	11	infinity                 	        
-10	12	infinity                 	        
+10	10	infinity
+10	11	infinity
+10	12	infinity
 10	13	37.24	B-      
 10	14	202.8	B-      
 10	15	0.602	B-      
@@ -216,7 +216,7 @@ Z  	N  	halflife           	decayMode
 11	9	0.448	EA      
 11	10	22.49	EC      
 11	11	82130000	EC      
-11	12	infinity                 	        
+11	12	infinity
 11	13	53989.2	B-      
 11	13	0.0202	IT      
 11	13	0.0202	B-      
@@ -258,9 +258,9 @@ Z  	N  	halflife           	decayMode
 12	9	0.122	EA      
 12	10	3.876	EC      
 12	11	11.317	EC      
-12	12	infinity                 	        
-12	13	infinity                 	        
-12	14	infinity                 	        
+12	12	infinity
+12	13	infinity
+12	14	infinity
 12	15	567.48	B-      
 12	16	75294	B-      
 12	17	1.3	B-      
@@ -300,7 +300,7 @@ Z  	N  	halflife           	decayMode
 13	12	7.183	EC      
 13	13	22630000000000	EC      
 13	13	6.346	EC      
-13	14	infinity                 	        
+13	14	infinity
 13	15	134.484	B-      
 13	16	393.6	B-      
 13	17	3.62	B-      
@@ -338,9 +338,9 @@ Z  	N  	halflife           	decayMode
 14	11	0.22	EP      
 14	12	2.229	EC      
 14	13	4.15	EC      
-14	14	infinity                 	        
-14	15	infinity                 	        
-14	16	infinity                 	        
+14	14	infinity
+14	15	infinity
+14	16	infinity
 14	17	9438	B-      
 14	18	4828000000	B-      
 14	19	6.11	B-      
@@ -378,7 +378,7 @@ Z  	N  	halflife           	decayMode
 15	13	0.27	EA      
 15	14	4.142	EC      
 15	15	149.88	EC      
-15	16	infinity                 	        
+15	16	infinity
 15	17	1232236.8	B-      
 15	18	2190240	B-      
 15	19	12.43	B-      
@@ -412,11 +412,11 @@ Z  	N  	halflife           	decayMode
 16	13	0.187	EP      
 16	14	1.178	EC      
 16	15	2.572	EC      
-16	16	infinity                 	        
-16	17	infinity                 	        
-16	18	infinity                 	        
+16	16	infinity
+16	17	infinity
+16	18	infinity
 16	19	7548768	B-      
-16	20	infinity                 	        
+16	20	infinity
 16	21	303	B-      
 16	22	10218	B-      
 16	23	11.5	B-      
@@ -446,10 +446,10 @@ Z  	N  	halflife           	decayMode
 17	17	1.526	EC      
 17	17	1920	IT      
 17	17	1920	EC      
-17	18	infinity                 	        
+17	18	infinity
 17	19	9499000000000	B-      
 17	19	9499000000000	EC      
-17	20	infinity                 	        
+17	20	infinity
 17	21	2234.4	B-      
 17	21	0.715	IT      
 17	22	3372	B-      
@@ -480,11 +480,11 @@ Z  	N  	halflife           	decayMode
 18	15	0.173	EC      
 18	16	0.845	EC      
 18	17	1.776	EC      
-18	18	infinity                 	        
+18	18	infinity
 18	19	3027456	EC      
-18	20	infinity                 	        
+18	20	infinity
 18	21	8489000000	B-      
-18	22	infinity                 	        
+18	22	infinity
 18	23	6576.6	B-      
 18	24	1038200000	B-      
 18	25	322.2	B-      
@@ -515,10 +515,10 @@ Z  	N  	halflife           	decayMode
 19	19	458.16	EC      
 19	19	0.924	EC      
 19	19	0.924	IT      
-19	20	infinity                 	        
+19	20	infinity
 19	21	39380000000000000	B-      
 19	21	39380000000000000	EC      
-19	22	infinity                 	        
+19	22	infinity
 19	23	44355.6	B-      
 19	24	80280	B-      
 19	25	1327.8	B-      
@@ -557,9 +557,9 @@ Z  	N  	halflife           	decayMode
 20	19	0.86	EC      
 20	20	94670000000000000000000000000	2EC     
 20	21	3219000000000	EC      
-20	22	infinity                 	        
-20	23	infinity                 	        
-20	24	infinity                 	        
+20	22	infinity
+20	23	infinity
+20	24	infinity
 20	25	14050000	B-      
 20	26	88360000000000000000000	2B-     
 20	27	391910.4	B-      
@@ -596,7 +596,7 @@ Z  	N  	halflife           	decayMode
 21	23	14292	EC      
 21	23	210996	IT      
 21	23	210996	EC      
-21	24	infinity                 	        
+21	24	infinity
 21	24	0.318	IT      
 21	25	7239456	B-      
 21	25	18.75	IT      
@@ -638,11 +638,11 @@ Z  	N  	halflife           	decayMode
 22	21	0.509	EC      
 22	22	1893000000	EC      
 22	23	11088	EC      
-22	24	infinity                 	        
-22	25	infinity                 	        
-22	26	infinity                 	        
-22	27	infinity                 	        
-22	28	infinity                 	        
+22	24	infinity
+22	25	infinity
+22	26	infinity
+22	27	infinity
+22	28	infinity
 22	29	345.6	B-      
 22	30	102	B-      
 22	31	32.7	B-      
@@ -677,7 +677,7 @@ Z  	N  	halflife           	decayMode
 23	26	28510000	EC      
 23	27	6627000000000000000000000	EC      
 23	27	6627000000000000000000000	B-      
-23	28	infinity                 	        
+23	28	infinity
 23	29	224.58	B-      
 23	30	92.58	B-      
 23	31	49.8	B-      
@@ -722,9 +722,9 @@ Z  	N  	halflife           	decayMode
 24	25	2538	EC      
 24	26	41020000000000000000000000	2EC     
 24	27	2393496	EC      
-24	28	infinity                 	        
-24	29	infinity                 	        
-24	30	infinity                 	        
+24	28	infinity
+24	29	infinity
+24	30	infinity
 24	31	209.82	B-      
 24	32	356.4	B-      
 24	33	21.1	B-      
@@ -763,7 +763,7 @@ Z  	N  	halflife           	decayMode
 25	28	118000000000000	EC      
 25	29	26970000	EC      
 25	29	26970000	B-      
-25	30	infinity                 	        
+25	30	infinity
 25	31	9284.04	B-      
 25	32	85.4	B-      
 25	33	3	B-      
@@ -817,11 +817,11 @@ Z  	N  	halflife           	decayMode
 26	26	45.9	IT      
 26	27	510.6	EC      
 26	27	152.4	IT      
-26	28	infinity                 	        
+26	28	infinity
 26	29	86590000	EC      
-26	30	infinity                 	        
-26	31	infinity                 	        
-26	32	infinity                 	        
+26	30	infinity
+26	31	infinity
+26	32	infinity
 26	33	3844368	B-      
 26	34	82680000000000	B-      
 26	35	358.8	B-      
@@ -863,7 +863,7 @@ Z  	N  	halflife           	decayMode
 27	30	23480000	EC      
 27	31	6122304	EC      
 27	31	32760	IT      
-27	32	infinity                 	        
+27	32	infinity
 27	33	166300000	B-      
 27	33	628.02	IT      
 27	33	628.02	B-      
@@ -909,13 +909,13 @@ Z  	N  	halflife           	decayMode
 28	27	0.205	EC      
 28	28	524880	EC      
 28	29	128160	EC      
-28	30	infinity                 	        
+28	30	infinity
 28	31	2398000000000	EC      
-28	32	infinity                 	        
-28	33	infinity                 	        
-28	34	infinity                 	        
+28	32	infinity
+28	33	infinity
+28	34	infinity
 28	35	3194000000	B-      
-28	36	infinity                 	        
+28	36	infinity
 28	37	9063	B-      
 28	38	196560	B-      
 28	39	21	B-      
@@ -955,10 +955,10 @@ Z  	N  	halflife           	decayMode
 29	31	1422	EC      
 29	32	11998.8	EC      
 29	33	580.38	EC      
-29	34	infinity                 	        
+29	34	infinity
 29	35	45723.6	B-      
 29	35	45723.6	EC      
-29	36	infinity                 	        
+29	36	infinity
 29	37	307.2	B-      
 29	38	222588	B-      
 29	39	30.9	B-      
@@ -1012,9 +1012,9 @@ Z  	N  	halflife           	decayMode
 30	33	2308.2	EC      
 30	34	22090000000000000000000000000	2EC     
 30	35	21080000	EC      
-30	36	infinity                 	        
-30	37	infinity                 	        
-30	38	infinity                 	        
+30	36	infinity
+30	37	infinity
+30	38	infinity
 30	39	3384	B-      
 30	39	49536	IT      
 30	39	49536	B-      
@@ -1066,10 +1066,10 @@ Z  	N  	halflife           	decayMode
 31	35	34164	EC      
 31	36	281810.88	EC      
 31	37	4062.6	EC      
-31	38	infinity                 	        
+31	38	infinity
 31	39	1268.4	B-      
 31	39	1268.4	EC      
-31	40	infinity                 	        
+31	40	infinity
 31	41	50760	B-      
 31	42	17496	B-      
 31	43	487.2	B-      
@@ -1116,17 +1116,17 @@ Z  	N  	halflife           	decayMode
 32	35	1134	EC      
 32	36	23410000	EC      
 32	37	140580	EC      
-32	38	infinity                 	        
+32	38	infinity
 32	39	987552	EC      
 32	39	0.0204	IT      
-32	40	infinity                 	        
-32	41	infinity                 	        
+32	40	infinity
+32	41	infinity
 32	41	0.499	IT      
-32	42	infinity                 	        
+32	42	infinity
 32	43	4966.8	B-      
 32	43	47.7	IT      
 32	43	47.7	B-      
-32	44	infinity                 	        
+32	44	infinity
 32	45	40680	B-      
 32	45	52.9	B-      
 32	45	52.9	IT      
@@ -1168,7 +1168,7 @@ Z  	N  	halflife           	decayMode
 33	40	6937920	EC      
 33	41	1535328	EC      
 33	41	1535328	B-      
-33	42	infinity                 	        
+33	42	infinity
 33	42	0.0176	IT      
 33	43	94538.88	B-      
 33	44	139788	B-      
@@ -1209,12 +1209,12 @@ Z  	N  	halflife           	decayMode
 34	39	25740	EC      
 34	39	2388	IT      
 34	39	2388	EC      
-34	40	infinity                 	        
+34	40	infinity
 34	41	10350000	EC      
-34	42	infinity                 	        
-34	43	infinity                 	        
+34	42	infinity
+34	43	infinity
 34	43	17.4	IT      
-34	44	infinity                 	        
+34	44	infinity
 34	45	9309000000000	B-      
 34	45	235.2	IT      
 34	45	235.2	B-      
@@ -1222,7 +1222,7 @@ Z  	N  	halflife           	decayMode
 34	47	1107	B-      
 34	47	3436.8	IT      
 34	47	3436.8	B-      
-34	48	infinity                 	        
+34	48	infinity
 34	49	1338	B-      
 34	49	70.1	B-      
 34	50	195.6	B-      
@@ -1264,12 +1264,12 @@ Z  	N  	halflife           	decayMode
 35	42	256.8	IT      
 35	43	387	EC      
 35	43	387	B-      
-35	44	infinity                 	        
+35	44	infinity
 35	44	5.1	IT      
 35	45	1060.8	B-      
 35	45	1060.8	EC      
 35	45	15913.8	IT      
-35	46	infinity                 	        
+35	46	infinity
 35	47	127015.2	B-      
 35	47	367.8	IT      
 35	47	367.8	B-      
@@ -1318,18 +1318,18 @@ Z  	N  	halflife           	decayMode
 36	42	47340000000000000000000000000	2EC     
 36	43	126144	EC      
 36	43	50	IT      
-36	44	infinity                 	        
+36	44	infinity
 36	45	7227000000000	EC      
 36	45	13.1	IT      
 36	45	13.1	EC      
-36	46	infinity                 	        
-36	47	infinity                 	        
+36	46	infinity
+36	47	infinity
 36	47	6660	IT      
-36	48	infinity                 	        
+36	48	infinity
 36	49	339300000	B-      
 36	49	16128	B-      
 36	49	16128	IT      
-36	50	infinity                 	        
+36	50	infinity
 36	51	4578	B-      
 36	52	10224	B-      
 36	53	189	B-      
@@ -1380,7 +1380,7 @@ Z  	N  	halflife           	decayMode
 37	47	2835648	EC      
 37	47	2835648	B-      
 37	47	1215.6	IT      
-37	48	infinity                 	        
+37	48	infinity
 37	49	1610668.8	B-      
 37	49	1610668.8	EC      
 37	49	61.02	IT      
@@ -1435,15 +1435,15 @@ Z  	N  	halflife           	decayMode
 38	44	2189376	EC      
 38	45	116675.1	EC      
 38	45	4.95	IT      
-38	46	infinity                 	        
+38	46	infinity
 38	47	5603039.1	EC      
 38	47	4057.8	IT      
 38	47	4057.8	EC      
-38	48	infinity                 	        
-38	49	infinity                 	        
+38	48	infinity
+38	49	infinity
 38	49	10134	IT      
 38	49	10134	EC      
-38	50	infinity                 	        
+38	50	infinity
 38	51	4365792	B-      
 38	52	912000000	B-      
 38	53	34668	B-      
@@ -1505,7 +1505,7 @@ Z  	N  	halflife           	decayMode
 39	48	48132	IT      
 39	48	48132	EC      
 39	49	9212486.4	EC      
-39	50	infinity                 	        
+39	50	infinity
 39	50	15.663	IT      
 39	51	230590.8	B-      
 39	51	11484	IT      
@@ -1577,12 +1577,12 @@ Z  	N  	halflife           	decayMode
 40	49	282276	EC      
 40	49	249.66	IT      
 40	49	249.66	EC      
-40	50	infinity                 	        
+40	50	infinity
 40	50	0.809	IT      
-40	51	infinity                 	        
-40	52	infinity                 	        
+40	51	infinity
+40	52	infinity
 40	53	50808000000000	B-      
-40	54	infinity                 	        
+40	54	infinity
 40	55	5532364.8	B-      
 40	56	741600000000000000000000000	2B-     
 40	57	60296.4	B-      
@@ -1638,7 +1638,7 @@ Z  	N  	halflife           	decayMode
 41	51	1095000000000000	EC      
 41	51	1095000000000000	B-      
 41	51	876960	EC      
-41	52	infinity                 	        
+41	52	infinity
 41	52	508710000	IT      
 41	53	640600000000	B-      
 41	53	375.78	IT      
@@ -1701,15 +1701,15 @@ Z  	N  	halflife           	decayMode
 42	49	929.4	EC      
 42	49	64.6	EC      
 42	49	64.6	IT      
-42	50	infinity                 	        
+42	50	infinity
 42	51	126200000000	EC      
 42	51	24660	IT      
 42	51	24660	EC      
-42	52	infinity                 	        
-42	53	infinity                 	        
-42	54	infinity                 	        
-42	55	infinity                 	        
-42	56	infinity                 	        
+42	52	infinity
+42	53	infinity
+42	54	infinity
+42	55	infinity
+42	56	infinity
 42	57	237513.6	B-      
 42	58	230400000000000000000000000	2B-     
 42	59	876.6	B-      
@@ -1824,15 +1824,15 @@ Z  	N  	halflife           	decayMode
 44	49	10.8	IT      
 44	50	3108	EC      
 44	51	5914.8	EC      
-44	52	infinity                 	        
+44	52	infinity
 44	53	244512	EC      
-44	54	infinity                 	        
-44	55	infinity                 	        
-44	56	infinity                 	        
-44	57	infinity                 	        
-44	58	infinity                 	        
+44	54	infinity
+44	55	infinity
+44	56	infinity
+44	57	infinity
+44	58	infinity
 44	59	3390940.8	B-      
-44	60	infinity                 	        
+44	60	infinity
 44	61	15984	B-      
 44	62	32120000	B-      
 44	63	225	B-      
@@ -1903,7 +1903,7 @@ Z  	N  	halflife           	decayMode
 45	57	17910000	B-      
 45	57	118100000	EC      
 45	57	118100000	IT      
-45	58	infinity                 	        
+45	58	infinity
 45	58	3366.84	IT      
 45	59	42.3	EC      
 45	59	42.3	B-      
@@ -1965,17 +1965,17 @@ Z  	N  	halflife           	decayMode
 46	53	1284	EC      
 46	54	313632	EC      
 46	55	30492	EC      
-46	56	infinity                 	        
+46	56	infinity
 46	57	1468022.4	EC      
-46	58	infinity                 	        
-46	59	infinity                 	        
-46	60	infinity                 	        
+46	58	infinity
+46	59	infinity
+46	60	infinity
 46	61	205120000000000	B-      
 46	61	21.3	IT      
-46	62	infinity                 	        
+46	62	infinity
 46	63	49324.32	B-      
 46	63	281.76	IT      
-46	64	infinity                 	        
+46	64	infinity
 46	65	1404	B-      
 46	65	19800	IT      
 46	65	19800	B-      
@@ -2045,13 +2045,13 @@ Z  	N  	halflife           	decayMode
 47	59	1437.6	EC      
 47	59	1437.6	B-      
 47	59	715392	EC      
-47	60	infinity                 	        
+47	60	infinity
 47	60	44.3	IT      
 47	61	142.92	B-      
 47	61	142.92	EC      
 47	61	13820000000	EC      
 47	61	13820000000	IT      
-47	62	infinity                 	        
+47	62	infinity
 47	62	39.6	IT      
 47	63	24.6	B-      
 47	63	24.6	EC      
@@ -2133,10 +2133,10 @@ Z  	N  	halflife           	decayMode
 48	59	23400	EC      
 48	60	59960000000000000000000000	2EC     
 48	61	39860000	EC      
-48	62	infinity                 	        
-48	63	infinity                 	        
+48	62	infinity
+48	63	infinity
 48	63	2910	IT      
-48	64	infinity                 	        
+48	64	infinity
 48	65	252500000000000000000000	B-      
 48	65	445000000	B-      
 48	65	445000000	IT      
@@ -2207,7 +2207,7 @@ Z  	N  	halflife           	decayMode
 49	63	898.2	B-      
 49	63	898.2	EC      
 49	63	1233.6	IT      
-49	64	infinity                 	        
+49	64	infinity
 49	64	5968.56	IT      
 49	65	71.9	B-      
 49	65	71.9	EC      
@@ -2309,19 +2309,19 @@ Z  	N  	halflife           	decayMode
 50	63	9943776	EC      
 50	63	1284	IT      
 50	63	1284	EC      
-50	64	infinity                 	        
-50	65	infinity                 	        
-50	66	infinity                 	        
-50	67	infinity                 	        
+50	64	infinity
+50	65	infinity
+50	66	infinity
+50	67	infinity
 50	67	1188864	IT      
-50	68	infinity                 	        
-50	69	infinity                 	        
+50	68	infinity
+50	69	infinity
 50	69	25320000	IT      
-50	70	infinity                 	        
+50	70	infinity
 50	71	97308	B-      
 50	71	1385000000	IT      
 50	71	1385000000	B-      
-50	72	infinity                 	        
+50	72	infinity
 50	73	11160000	B-      
 50	73	2403.6	B-      
 50	74	37870000000000000000000000000	2B-     
@@ -2378,11 +2378,11 @@ Z  	N  	halflife           	decayMode
 51	68	0.85	IT      
 51	69	953.4	EC      
 51	69	497664	EC      
-51	70	infinity                 	        
+51	70	infinity
 51	71	235336.32	B-      
 51	71	235336.32	EC      
 51	71	251.46	IT      
-51	72	infinity                 	        
+51	72	infinity
 51	73	5201280	B-      
 51	73	93	IT      
 51	73	93	B-      
@@ -2449,17 +2449,17 @@ Z  	N  	halflife           	decayMode
 52	67	57780	EC      
 52	67	406080	EC      
 52	67	406080	IT      
-52	68	infinity                 	        
+52	68	infinity
 52	69	1656288	EC      
 52	69	14190000	IT      
 52	69	14190000	EC      
-52	70	infinity                 	        
+52	70	infinity
 52	71	2903000000000000000000000	EC      
 52	71	10299000	IT      
-52	72	infinity                 	        
-52	73	infinity                 	        
+52	72	infinity
+52	73	infinity
 52	73	4959360	IT      
-52	74	infinity                 	        
+52	74	infinity
 52	75	33660	B-      
 52	75	9167040	IT      
 52	75	9167040	B-      
@@ -2530,7 +2530,7 @@ Z  	N  	halflife           	decayMode
 53	72	5132764.8	EC      
 53	73	1117152	EC      
 53	73	1117152	B-      
-53	74	infinity                 	        
+53	74	infinity
 53	75	1499.4	B-      
 53	75	1499.4	EC      
 53	76	495500000000000	B-      
@@ -2594,16 +2594,16 @@ Z  	N  	halflife           	decayMode
 54	70	5049200000000000000000	2EC     
 54	71	60839.1	EC      
 54	71	57	IT      
-54	72	infinity                 	        
+54	72	infinity
 54	73	3140294.4	EC      
 54	73	69.2	IT      
-54	74	infinity                 	        
-54	75	infinity                 	        
+54	74	infinity
+54	75	infinity
 54	75	767232	IT      
-54	76	infinity                 	        
-54	77	infinity                 	        
+54	76	infinity
+54	77	infinity
 54	77	1022976	IT      
-54	78	infinity                 	        
+54	78	infinity
 54	78	0.00839	IT      
 54	79	453383.1	B-      
 54	79	189907.2	IT      
@@ -2685,7 +2685,7 @@ Z  	N  	halflife           	decayMode
 55	76	837129.6	EC      
 55	77	559872	EC      
 55	77	559872	B-      
-55	78	infinity                 	        
+55	78	infinity
 55	79	65170000	B-      
 55	79	65170000	EC      
 55	79	10483.2	IT      
@@ -2761,14 +2761,14 @@ Z  	N  	halflife           	decayMode
 56	77	333000000	EC      
 56	77	140148	IT      
 56	77	140148	EC      
-56	78	infinity                 	        
-56	79	infinity                 	        
+56	78	infinity
+56	79	infinity
 56	79	103320	IT      
-56	80	infinity                 	        
+56	80	infinity
 56	80	0.308	IT      
-56	81	infinity                 	        
+56	81	infinity
 56	81	153.12	IT      
-56	82	infinity                 	        
+56	82	infinity
 56	83	4983.6	B-      
 56	84	1101833.28	B-      
 56	85	1096.2	B-      
@@ -2829,7 +2829,7 @@ Z  	N  	halflife           	decayMode
 57	80	1893000000000	EC      
 57	81	3219000000000000000	EC      
 57	81	3219000000000000000	B-      
-57	82	infinity                 	        
+57	82	infinity
 57	83	145026.72	B-      
 57	84	14112	B-      
 57	85	5466	B-      
@@ -2888,7 +2888,7 @@ Z  	N  	halflife           	decayMode
 58	80	0.00865	IT      
 58	81	11890000	EC      
 58	81	54.8	IT      
-58	82	infinity                 	        
+58	82	infinity
 58	83	2808691.2	B-      
 58	84	1578000000000000000000000	2B-     
 58	85	118940.4	B-      
@@ -2937,7 +2937,7 @@ Z  	N  	halflife           	decayMode
 59	79	7632	EC      
 59	80	15876	EC      
 59	81	203.4	EC      
-59	82	infinity                 	        
+59	82	infinity
 59	83	68832	B-      
 59	83	68832	EC      
 59	83	876	IT      
@@ -2995,13 +2995,13 @@ Z  	N  	halflife           	decayMode
 60	81	8964	EC      
 60	81	62	EC      
 60	81	62	IT      
-60	82	infinity                 	        
-60	83	infinity                 	        
+60	82	infinity
+60	83	infinity
 60	84	72270000000000000000000	A       
-60	85	infinity                 	        
-60	86	infinity                 	        
+60	85	infinity
+60	86	infinity
 60	87	948672	B-      
-60	88	infinity                 	        
+60	88	infinity
 60	89	6220.8	B-      
 60	90	249300000000000000000000000	        
 60	91	746.4	B-      
@@ -3108,18 +3108,18 @@ Z  	N  	halflife           	decayMode
 62	81	66	IT      
 62	81	66	EC      
 62	81	0.03	IT      
-62	82	infinity                 	        
+62	82	infinity
 62	83	29380000	EC      
 62	84	3250000000000000	A       
 62	85	3345000000000000000	A       
 62	86	220900000000000000000000	A       
-62	87	infinity                 	        
-62	88	infinity                 	        
+62	87	infinity
+62	88	infinity
 62	89	2840000000	B-      
-62	90	infinity                 	        
+62	90	infinity
 62	91	166622.4	B-      
 62	91	0.0106	IT      
-62	92	infinity                 	        
+62	92	infinity
 62	93	1338	B-      
 62	94	33840	B-      
 62	95	481.8	B-      
@@ -3175,7 +3175,7 @@ Z  	N  	halflife           	decayMode
 63	89	33521.76	B-      
 63	89	33521.76	EC      
 63	89	5760	IT      
-63	90	infinity                 	        
+63	90	infinity
 63	91	271400000	B-      
 63	91	271400000	EC      
 63	91	2778	IT      
@@ -3226,12 +3226,12 @@ Z  	N  	halflife           	decayMode
 64	87	10705000	A       
 64	88	3408000000000000000000	A       
 64	89	20771000	EC      
-64	90	infinity                 	        
-64	91	infinity                 	        
+64	90	infinity
+64	91	infinity
 64	91	0.032	IT      
-64	92	infinity                 	        
-64	93	infinity                 	        
-64	94	infinity                 	        
+64	92	infinity
+64	93	infinity
+64	94	infinity
 64	95	66524.4	B-      
 64	96	978300000000000000000000000	2B-     
 64	97	219.6	B-      
@@ -3307,7 +3307,7 @@ Z  	N  	halflife           	decayMode
 65	93	10.7	B-      
 65	93	10.7	EC      
 65	93	0.0004	IT      
-65	94	infinity                 	        
+65	94	infinity
 65	95	6246720	B-      
 65	96	595296	B-      
 65	97	456	B-      
@@ -3358,16 +3358,16 @@ Z  	N  	halflife           	decayMode
 66	87	23040	A       
 66	88	94670000000000	A       
 66	89	35640	EC      
-66	90	infinity                 	        
+66	90	infinity
 66	91	29304	EC      
 66	91	0.0216	IT      
-66	92	infinity                 	        
+66	92	infinity
 66	93	12480000	EC      
-66	94	infinity                 	        
-66	95	infinity                 	        
-66	96	infinity                 	        
-66	97	infinity                 	        
-66	98	infinity                 	        
+66	94	infinity
+66	95	infinity
+66	96	infinity
+66	97	infinity
+66	98	infinity
 66	99	8402.4	B-      
 66	99	75.42	IT      
 66	99	75.42	B-      
@@ -3443,7 +3443,7 @@ Z  	N  	halflife           	decayMode
 67	97	1740	EC      
 67	97	1740	B-      
 67	97	2250	IT      
-67	98	infinity                 	        
+67	98	infinity
 67	99	96566.4	B-      
 67	99	37870000000	B-      
 67	100	10810.8	B-      
@@ -3496,16 +3496,16 @@ Z  	N  	halflife           	decayMode
 68	91	2160	EC      
 68	92	102888	EC      
 68	93	11556	EC      
-68	94	infinity                 	        
+68	94	infinity
 68	95	4500	EC      
-68	96	infinity                 	        
+68	96	infinity
 68	97	37296	EC      
-68	98	infinity                 	        
-68	99	infinity                 	        
+68	98	infinity
+68	99	infinity
 68	99	2.269	IT      
-68	100	infinity                 	        
+68	100	infinity
 68	101	811468.8	B-      
-68	102	infinity                 	        
+68	102	infinity
 68	103	27057.6	B-      
 68	104	177480	B-      
 68	105	84	B-      
@@ -3567,7 +3567,7 @@ Z  	N  	halflife           	decayMode
 69	98	799200	EC      
 69	99	8043839.1	EC      
 69	99	8043839.1	B-      
-69	100	infinity                 	        
+69	100	infinity
 69	101	11110000	B-      
 69	101	11110000	EC      
 69	102	60591000	B-      
@@ -3613,18 +3613,18 @@ Z  	N  	halflife           	decayMode
 70	95	594	EC      
 70	96	204120	EC      
 70	97	1050	EC      
-70	98	infinity                 	        
+70	98	infinity
 70	99	2766355.2	EC      
 70	99	46	IT      
-70	100	infinity                 	        
-70	101	infinity                 	        
+70	100	infinity
+70	101	infinity
 70	101	0.00525	IT      
-70	102	infinity                 	        
-70	103	infinity                 	        
-70	104	infinity                 	        
+70	102	infinity
+70	103	infinity
+70	104	infinity
 70	105	361583.1	B-      
 70	105	0.0682	IT      
-70	106	infinity                 	        
+70	106	infinity
 70	106	11.4	IT      
 70	107	6879.6	B-      
 70	107	6.41	IT      
@@ -3692,7 +3692,7 @@ Z  	N  	halflife           	decayMode
 71	103	104460000	EC      
 71	103	12270000	IT      
 71	103	12270000	EC      
-71	104	infinity                 	        
+71	104	infinity
 71	105	1187000000000000000	B-      
 71	105	13190.4	B-      
 71	105	13190.4	EC      
@@ -3744,17 +3744,17 @@ Z  	N  	halflife           	decayMode
 72	101	84960	EC      
 72	102	63120000000000000000000	A       
 72	103	6048000	EC      
-72	104	infinity                 	        
-72	105	infinity                 	        
+72	104	infinity
+72	105	infinity
 72	105	1.09	IT      
 72	105	3084	IT      
-72	106	infinity                 	        
+72	106	infinity
 72	106	4	IT      
 72	106	978300000	IT      
-72	107	infinity                 	        
+72	107	infinity
 72	107	18.67	IT      
 72	107	2164320	IT      
-72	108	infinity                 	        
+72	108	infinity
 72	108	19692	IT      
 72	108	19692	B-      
 72	109	3662496	B-      
@@ -3823,7 +3823,7 @@ Z  	N  	halflife           	decayMode
 73	107	29354.4	B-      
 73	107	37870000000000000000000	EC      
 73	107	37870000000000000000000	B-      
-73	108	infinity                 	        
+73	108	infinity
 73	109	9913536	B-      
 73	109	0.283	IT      
 73	109	950.4	IT      
@@ -3881,10 +3881,10 @@ Z  	N  	halflife           	decayMode
 74	105	384	EC      
 74	106	20828000000000000000000000	2EC     
 74	107	10472000	EC      
-74	108	infinity                 	        
+74	108	infinity
 74	109	410200000000000000000000000	A       
 74	109	5.2	IT      
-74	110	infinity                 	        
+74	110	infinity
 74	111	6488639.1	B-      
 74	111	100.2	IT      
 74	112	725800000000000000000000000	2B-     
@@ -3954,7 +3954,7 @@ Z  	N  	halflife           	decayMode
 75	109	3058560	EC      
 75	109	14600000	IT      
 75	109	14600000	EC      
-75	110	infinity                 	        
+75	110	infinity
 75	111	321287.04	B-      
 75	111	321287.04	EC      
 75	111	6312000000000	IT      
@@ -4019,15 +4019,15 @@ Z  	N  	halflife           	decayMode
 76	108	1767000000000000000000	A       
 76	109	8087039.1	EC      
 76	110	63120000000000000000000	A       
-76	111	infinity                 	        
-76	112	infinity                 	        
-76	113	infinity                 	        
+76	111	infinity
+76	112	infinity
+76	113	infinity
 76	113	20916	IT      
-76	114	infinity                 	        
+76	114	infinity
 76	114	594	IT      
 76	115	1330560	B-      
 76	115	47160	IT      
-76	116	infinity                 	        
+76	116	infinity
 76	116	5.9	B-      
 76	116	5.9	IT      
 76	117	108396	B-      
@@ -4121,7 +4121,7 @@ Z  	N  	halflife           	decayMode
 77	113	4032	IT      
 77	113	11113.2	EC      
 77	113	11113.2	IT      
-77	114	infinity                 	        
+77	114	infinity
 77	114	4.899	IT      
 77	114	5.5	IT      
 77	115	6378825.6	EC      
@@ -4129,7 +4129,7 @@ Z  	N  	halflife           	decayMode
 77	115	87	IT      
 77	115	87	B-      
 77	115	7605000000	IT      
-77	116	infinity                 	        
+77	116	infinity
 77	116	909792	IT      
 77	117	69408	B-      
 77	117	0.0319	IT      
@@ -4199,17 +4199,17 @@ Z  	N  	halflife           	decayMode
 78	111	39132	EC      
 78	112	20512000000000000000	A       
 78	113	244512	EC      
-78	114	infinity                 	        
+78	114	infinity
 78	115	1578000000	EC      
 78	115	374112	IT      
-78	116	infinity                 	        
-78	117	infinity                 	        
+78	116	infinity
+78	117	infinity
 78	117	346464	IT      
-78	118	infinity                 	        
+78	118	infinity
 78	119	71609.4	B-      
 78	119	5724.6	IT      
 78	119	5724.6	B-      
-78	120	infinity                 	        
+78	120	infinity
 78	121	1848	B-      
 78	121	13.6	IT      
 78	122	45360	B-      
@@ -4304,7 +4304,7 @@ Z  	N  	halflife           	decayMode
 79	117	532820.16	B-      
 79	117	8.1	IT      
 79	117	34560	IT      
-79	118	infinity                 	        
+79	118	infinity
 79	118	7.73	IT      
 79	119	232830.72	B-      
 79	119	196300.8	IT      
@@ -4384,18 +4384,18 @@ Z  	N  	halflife           	decayMode
 80	115	37908	EC      
 80	115	149760	IT      
 80	115	149760	EC      
-80	116	infinity                 	        
+80	116	infinity
 80	117	230904	EC      
 80	117	85680	IT      
 80	117	85680	EC      
-80	118	infinity                 	        
-80	119	infinity                 	        
+80	118	infinity
+80	119	infinity
 80	119	2560.2	IT      
-80	120	infinity                 	        
-80	121	infinity                 	        
-80	122	infinity                 	        
+80	120	infinity
+80	121	infinity
+80	122	infinity
 80	123	4025721.6	B-      
-80	124	infinity                 	        
+80	124	infinity
 80	125	308.4	B-      
 80	125	0.00109	IT      
 80	126	499.2	B-      
@@ -4492,10 +4492,10 @@ Z  	N  	halflife           	decayMode
 81	120	262837.44	EC      
 81	120	0.00201	IT      
 81	121	1063584	EC      
-81	122	infinity                 	        
+81	122	infinity
 81	123	119400000	B-      
 81	123	119400000	EC      
-81	124	infinity                 	        
+81	124	infinity
 81	125	252.12	B-      
 81	125	224.4	IT      
 81	126	286.2	B-      
@@ -4578,10 +4578,10 @@ Z  	N  	halflife           	decayMode
 82	122	4015.8	IT      
 82	123	545900000000000	EC      
 82	123	0.00555	IT      
-82	124	infinity                 	        
-82	125	infinity                 	        
+82	124	infinity
+82	125	infinity
 82	125	0.806	IT      
-82	126	infinity                 	        
+82	126	infinity
 82	127	11710.8	B-      
 82	128	700579000	B-      
 82	128	700579000	A       
@@ -4675,7 +4675,7 @@ Z  	N  	halflife           	decayMode
 83	124	995600000	EC      
 83	125	11610000000000	EC      
 83	125	0.00258	IT      
-83	126	infinity                 	        
+83	126	infinity
 83	127	433036.8	B-      
 83	127	433036.8	A       
 83	127	95940000000000	A       
