@@ -27,7 +27,7 @@ class Particle {
     }
 
     //printIfDebugging("x: "+position.x+" y: "+position.y+" vx: "+velocity.x+" vy: "+velocity.y);
-    if (abs(position.x)>width*5/8||abs(position.y)>height*5/8) { // Particle has escaped - mark it inactive and do nothing more with it
+    if ((abs(position.x)>width*5/(8*zoomLevel)||abs(position.y)>height*5/(8*zoomLevel)) && this.linkedIn==false) { // Particle has escaped - mark it inactive and do nothing more with it
       printIfDebugging("doom time!");
       this.active=false;
     }

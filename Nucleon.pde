@@ -98,6 +98,14 @@ class Nucleon extends Particle { // It's possible this should be an interface
     if (this.mood==OHNOEZ && this!=protonOne) {
       this.position.x+=vibrate;
       vibrate*=-1;
+      if (decayTypes[atomicNumber][neutrons]==POSITRON || decayTypes[atomicNumber][neutrons]==ELECTRON) { // Beta decay
+        if (random(0,1)>0.5){
+          this.sprite=neutronImages;
+        }
+        else {
+          this.sprite=protonImages;
+        }
+      }
     }
   }
 }
