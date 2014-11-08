@@ -14,7 +14,7 @@ boolean arduinoised=true;
 Nucleon[] nucleons;
 Nucleon[] doomed;
 String[] halfLifeList; // To store half-life information.
-String announcement="It all starts with hydrogen...";
+String announcement="";
 float doomTime=1666;
 float em=0.5; // Strength of the electromagnetic force
 Proton protonOne;
@@ -32,6 +32,7 @@ final int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5, NONE
 String radiationNames[]= { 
   "Neutron", "Proton", "Beta+ (positron)", "Beta- (electron)", "Alpha"
 };
+String[] radiationSnippets={ "A neutral particle", "A positively charged particle", "This anti-electron will annihilate an electron", "Quite penetrating ionising radiation", "A helium nucleus - easily stopped by a sheet of paper"};
 final int NEUTRON_BUTTON=11, PROTON_BUTTON=12, HELP_BUTTON=13;
 float zoomLevel=1;
 float[][] halfLives;
@@ -55,7 +56,7 @@ Particle beta;
 Minim minim;
 AudioSample pop, pop2;
 
-boolean debugging=true, java=true, paused=true, wasHigh=true, freshlyStarted=true;
+boolean debugging=false, java=true, paused=true, wasHigh=true, freshlyStarted=true;
 
 void setup () {
   size(480, 640);
@@ -199,14 +200,14 @@ void draw () {
             new Neutron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x, thisNucleon.velocity.y);
             thisNucleon.velocity.x-=thisNucleon.position.x/20;
             thisNucleon.velocity.y-=thisNucleon.position.y/20;
-            beta=new Positron(thisNucleon.position.x, thisNucleon.position.y,thisNucleon.position.x/10, thisNucleon.position.y/10);
+            beta=new Positron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.position.x/10, thisNucleon.position.y/10);
           }
           else if (decayTypes[atomicNumber][neutrons]==ELECTRON) { // Beta- decay
             thisNucleon.active=false;
             new Proton(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x, thisNucleon.velocity.y);
             thisNucleon.velocity.x-=thisNucleon.position.x/20;
             thisNucleon.velocity.y-=thisNucleon.position.y/20;
-            beta=new Electron(thisNucleon.position.x, thisNucleon.position.y,thisNucleon.position.x/10, thisNucleon.position.y/10);
+            beta=new Electron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.position.x/10, thisNucleon.position.y/10);
           }
           else {
             thisNucleon.mood=BYEBYE;
@@ -216,6 +217,8 @@ void draw () {
           if (radiationEmitted[decayTypes[atomicNumber][neutrons]]==false && decayTypes[atomicNumber][neutrons]<radiationNames.length) {
             announcement=""+radiationNames[decayTypes[atomicNumber][neutrons]]+" radiation emitted!";
             radiationEmitted[decayTypes[atomicNumber][neutrons]]=true;
+            snippet=radiationSnippets[decayTypes[atomicNumber][neutrons]];
+            snippet2="";
           }
         }
         if (thisNucleon.moodTime>0) thisNucleon.moodTime--;
@@ -228,7 +231,7 @@ void draw () {
         }
       }
     }
-    if (beta!=null && beta.active==true){
+    if (beta!=null && beta.active==true) {
       beta.updatePosition();
       beta.drawSprite();
     }
@@ -280,7 +283,7 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
         }
       }
     }
-    if (atomicNumber!=oldAtomicNumber||neutrons!=oldNeutrons && atomicNumber<119) { // New nuclide time
+    if ((atomicNumber!=oldAtomicNumber||neutrons!=oldNeutrons) && atomicNumber<119) { // New nuclide time
       // Announce new element if (atomicNumber!=oldAtomicNumber)
       // Here we establish how happy the protons and neutrons should be, and if one of them needs to decay
       int newMood=SMILE;
@@ -371,10 +374,12 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
     text(atomicNumber, 32, 64);
     text(atomicMass, 32, 100);
     textAlign(CENTER);
-    if (elementNames[atomicNumber].length()>8) {
-      textSize(160/elementNames[atomicNumber].length());
+    if (atomicNumber<119) {
+      if (elementNames[atomicNumber].length()>8) {
+        textSize(160/elementNames[atomicNumber].length());
+      }
+      text(elementNames[atomicNumber], 60, 122);
     }
-    text(elementNames[atomicNumber], 60, 122);
     popMatrix();
     protonCannonCountdown--;
     neutronCannonCountdown--;
@@ -427,10 +432,10 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
     //printIfDebugging(decayModes[atomicNumber][neutrons]);
     textAlign(CENTER);
     textSize(20);
-    text(announcement, width/2-30, 54);
+    text(announcement, width/2, height-70);
     textSize(14);
-    text(snippet, width/2-30, 78);
-    text(snippet2, width/2-30, 100);
+    text(snippet, width/2, height-40);
+    text(snippet2, width/2, height-20);
     //text("Decay mode: "+decayModes[atomicNumber][neutrons], 10, 50);
     //text("Halflife: "+halfLives[atomicNumber][neutrons], 10, 70);
   }
@@ -574,9 +579,12 @@ void reset() {
     pop = minim.loadSample("pop.mp3", 128);
     pop2 = minim.loadSample("pop2.mp3", 128);
     soundsLoaded=2;
-    for (int i=0; i<8; i++) { // Need all files to exist or this bit bugs out
-      printIfDebugging("Element to load: "+soundsLoaded);      
-      elementSounds[soundsLoaded%10]=minim.loadSample("mp3/"+soundsLoaded+".mp3", 128);
+    for (int i=2; i<12; i++) { // Need all files to exist or this bit bugs out
+      printIfDebugging("Element to load: "+soundsLoaded);   
+      if (elementSounds[i%10]!=null) {
+        elementSounds[i%10].close();
+      }
+      elementSounds[i%10]=minim.loadSample("mp3/"+i+".mp3", 128);
       //printIfDebugging("Element loaded: "+i);
       soundsLoaded++;
     }
@@ -591,6 +599,11 @@ void reset() {
   for (int i=2; i<119; i++) {
     elementMade[i]=false;
   }
+  for (int i=0; i<radiationEmitted.length; i++) {
+    radiationEmitted[i]=false;
+  }
+  announcement="It all starts with hydrogen...";
+  snippet="92% of all atoms in the universe";
   elementMade[1]=true;
   elementMade[0]=true;
 }
@@ -652,16 +665,20 @@ void loadData() {
       elementNames[protonCount]=name;
       elementSymbols[protonCount]=symbol;
       String snippet1="", snippet2="";
-      if (snippet.length()>36){
+      if (snippet.length()>36) {
         String[] snippetBits=splitTokens(snippet);
         int j=0;
-        while (snippet1.length()<36){
-          String[] twoBits={snippet1, snippetBits[j]};
+        while (snippet1.length ()<36) {
+          String[] twoBits= {
+            snippet1, snippetBits[j]
+          };
           snippet1=join (twoBits, " ");
           j++;
         }
-        while (j<snippetBits.length){
-          String[] twoBits={snippet2, snippetBits[j]};
+        while (j<snippetBits.length) {
+          String[] twoBits= {
+            snippet2, snippetBits[j]
+          };
           snippet2=join (twoBits, " ");
           j++;
         }
