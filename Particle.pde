@@ -8,6 +8,7 @@ class Particle {
   boolean active=true;
   int particleIndex;
   float vibrate=2;
+  int baryonNumber=0;
   //float x, y, vx, vy;
   Particle (float x, float y, float vx, float vy) {
     this.position=new PVector (x, y);
@@ -30,6 +31,9 @@ class Particle {
     if ((abs(position.x)>width*5/(8*zoomLevel)||abs(position.y)>height*5/(8*zoomLevel)) && this.linkedIn==false) { // Particle has escaped - mark it inactive and do nothing more with it
       printIfDebugging("doom time!");
       this.active=false;
+      if (this.baryonNumber==1){
+        radiationEmitted[this.charge]++;
+      }
     }
   }
 

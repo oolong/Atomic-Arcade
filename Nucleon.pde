@@ -8,6 +8,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
     moodTime=200;
     diameter=nucleonDiameter;
     int i=0;
+    this.baryonNumber=1;
     boolean replacement=false;
     while (i<nucleonCount) {
       if (!nucleons[i].active) {
@@ -31,7 +32,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
     //text(sq(this.diameter), 100,120);
     float attractionMultiplier=-1;
     if (this.mood==BYEBYE ^ that.mood==BYEBYE) { // If one of these particles is going byebye, repel it
-      attractionMultiplier=1;
+      attractionMultiplier=1.8;
       //printIfDebugging("BYEBYE FORCE");
     }
     if (this.mood==OHNOEZ | that.mood==OHNOEZ) {
@@ -63,7 +64,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
         //printIfDebugging("magnitude set");
         this.velocity.add(force);
         that.velocity.sub(force);
-        if (magnitude>0.5 && attractionMultiplier==-1 && this.mood!=OHNOEZ) { // Express slight concern about bouncing
+        if (magnitude>0.5 && attractionMultiplier==-1 && this.mood!=OHNOEZ && this.mood!=BYEBYE) { // Express slight concern about bouncing
           if (this.mood!=FROWN) {
             this.velocity.mult(0.5);
             that.velocity.mult(0.5);

@@ -1,11 +1,12 @@
 import ddf.minim.*;
+//import minim.js;
 
-import processing.serial.*;
+//import processing.serial.*;
 
-import cc.arduino.*;
+//import cc.arduino.*;
 
 Arduino arduino;
-boolean arduinoised=true;
+boolean arduinoised=false;
 
 /* @pjs preload="circle-32.png, start-page.jpg, pause-page.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
  */
@@ -14,6 +15,7 @@ boolean arduinoised=true;
 Nucleon[] nucleons;
 Nucleon[] doomed;
 String[] halfLifeList; // To store half-life information.
+String[] credits;
 String announcement="";
 float doomTime=1666;
 float em=0.5; // Strength of the electromagnetic force
@@ -25,21 +27,23 @@ float nuclearRepulsion=0.8;
 float nucleonDiameter=36;
 float damping=0.99, vibrate=2;
 int atomicNumber=0, neutrons=0, killList=0, soundsLoaded=1;
-int atomicMass=0, nucleonCount=0, particlesMade=0, halfLifeCounter=100;
+int atomicMass=0, nucleonCount=0, particlesMade=0, halfLifeCounter=100, finishTime=0;
 int neutronCannonCountdown=0, protonCannonCountdown=0, currentCannon=0;
 final int SMILE=0, WHEEE=1, FROWN=2, CONCERN=3, OHNOEZ=4, BYEBYE=5;
 final int NEUTRON=0, PROTON=1, POSITRON=2, ELECTRON=3, HELIUM=4, UNKNOWN=5, NONE=-1; // Alpha decay is 'HELIUM' because ALPHA is a reserved word
 String radiationNames[]= { 
-  "Neutron", "Proton", "Beta+ (positron)", "Beta- (electron)", "Alpha"
+  "Neutron", "Proton", "Beta+", "Beta-", "Alpha"
 };
-String[] radiationSnippets={ "A neutral particle", "A positively charged particle", "This anti-electron will annihilate an electron", "Quite penetrating ionising radiation", "A helium nucleus - easily stopped by a sheet of paper"};
+String[] radiationSnippets= { 
+  "A neutral particle", "A positively charged particle", "Positron: the anti-electron", "An electron", "A helium nucleus"
+};
 final int NEUTRON_BUTTON=11, PROTON_BUTTON=12, HELP_BUTTON=13;
 float zoomLevel=1;
 float[][] halfLives;
 String[][] decayModes;
 int[][] decayTypes;
 boolean[] elementMade;
-boolean[] radiationEmitted;
+int[] radiationEmitted;
 String[] elementNames;
 String[] elementSymbols;
 String[] elementSnippets;
@@ -56,7 +60,7 @@ Particle beta;
 Minim minim;
 AudioSample pop, pop2;
 
-boolean debugging=false, java=true, paused=true, wasHigh=true, freshlyStarted=true;
+boolean debugging=false, java=true, paused=true, wasHigh=true, freshlyStarted=true, finished=false;
 
 void setup () {
   size(480, 640);
@@ -79,7 +83,7 @@ void setup () {
   image (startScreen, 0, 0, width, height);
   redraw();
   //noLoop();
-  nucleons=new Nucleon[300];
+  nucleons=new Nucleon[500];
   doomed=new Nucleon[16];
   backgroundImage=loadImage("background-for-web-demo.jpg");
   elementPad=loadImage("element-pad.png");
@@ -104,7 +108,7 @@ void setup () {
   elementSnippets2=new String[119];
   elementMade=new boolean[119];
   elementMade[1]=true;
-  radiationEmitted=new boolean[6];
+  radiationEmitted=new int[6];
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
   loadData(); // Note that this method needs commenting or uncommenting depending on mode
@@ -214,9 +218,11 @@ void draw () {
             thisNucleon.moodTime=2000;
           }
 
-          if (radiationEmitted[decayTypes[atomicNumber][neutrons]]==false && decayTypes[atomicNumber][neutrons]<radiationNames.length) {
+          if (radiationEmitted[decayTypes[atomicNumber][neutrons]]==0 && decayTypes[atomicNumber][neutrons]<radiationNames.length) {
             announcement=""+radiationNames[decayTypes[atomicNumber][neutrons]]+" radiation emitted!";
-            radiationEmitted[decayTypes[atomicNumber][neutrons]]=true;
+            if (decayTypes[atomicNumber][neutrons]>1&&decayTypes[atomicNumber][neutrons]!=HELIUM) {
+              radiationEmitted[decayTypes[atomicNumber][neutrons]]++;
+            }
             snippet=radiationSnippets[decayTypes[atomicNumber][neutrons]];
             snippet2="";
           }
@@ -286,6 +292,10 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
     if ((atomicNumber!=oldAtomicNumber||neutrons!=oldNeutrons) && atomicNumber<119) { // New nuclide time
       // Announce new element if (atomicNumber!=oldAtomicNumber)
       // Here we establish how happy the protons and neutrons should be, and if one of them needs to decay
+      if (atomicNumber==118) {
+        finished=true;
+        finishTime=millis();
+      }
       int newMood=SMILE;
       if (elementMade[atomicNumber]==false) {
         announcement="You made "+elementNames[atomicNumber]+"!";
@@ -307,38 +317,53 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
         snippet="";
         snippet2="";
       }
-      if (halfLives[atomicNumber][neutrons]<5) { // Half-life of just a few seconds
+      float halfLife=0;
+      if (neutrons<halfLives[1].length) {
+        halfLife=halfLives[atomicNumber][neutrons];
+      }
+      else {
+        halfLife=0;
+      }
+      if (halfLife<5) { // Half-life of just a few seconds
         newMood=CONCERN;
       } 
-      else if (halfLives[atomicNumber][neutrons]<10000) { // Not *so* unstable
+      else if (halfLife<10000) { // Not *so* unstable
         newMood=FROWN;
       } 
       else { //
         overallMood[1]=SMILE;
         overallMood[0]=SMILE;
       }
-      doomTime=(int)(millis()+1000*halfLives[atomicNumber][neutrons]*random(1)/random(1)); // Doom time is set within an infinite range centred on the half-life.
+
+      doomTime=(int)(millis()+1000*halfLife*random(1)/random(1)); // Doom time is set within an infinite range centred on the half-life.
       printIfDebugging("Doom will be in "+(doomTime-millis())+" milliseconds");
       printIfDebugging("millis now="+millis());
       killList=0;
       for (int i=0; i<nucleonCount; i++) { // No nucleons should stay doomed
         nucleons[i].doomLevel=0;
-        if (nucleons[i].mood==OHNOEZ || nucleons[i].mood==BYEBYE) { // OMG THE RELIEF
+        if (nucleons[i].mood==OHNOEZ||nucleons[i]==protonOne) { // OMG THE RELIEF
           nucleons[i].mood=WHEEE;
           nucleons[i].moodTime=500;
         }
       }
-      if (decayTypes[atomicNumber][neutrons]==NEUTRON|decayTypes[atomicNumber][neutrons]==ELECTRON) {
+      int decayType=0;
+      if (neutrons>decayTypes[1].length) {
+        decayType=HELIUM;
+      }
+      else {
+        decayType=decayTypes[atomicNumber][neutrons];
+      }
+      if (decayType==NEUTRON|decayType==ELECTRON) {
         overallMood[0]=newMood;
         overallMood[1]=SMILE;
         doomed[0]=chooseNucleon(0);
       } 
-      else if (decayTypes[atomicNumber][neutrons]==PROTON|decayTypes[atomicNumber][neutrons]==POSITRON) {
+      else if (decayType==PROTON|decayType==POSITRON) {
         overallMood[1]=newMood;
         overallMood[0]=SMILE;
         doomed[0]=chooseNucleon(1);
       } 
-      else if (decayTypes[atomicNumber][neutrons]==HELIUM||decayTypes[atomicNumber][neutrons]==UNKNOWN) { // Assume alpha decay if unknown.
+      else if (decayType==HELIUM||decayType==UNKNOWN) { // Assume alpha decay if unknown.
         overallMood[1]=newMood;
         overallMood[0]=newMood;
         doomed[0]=chooseNucleon(0);
@@ -436,8 +461,20 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
     textSize(14);
     text(snippet, width/2, height-40);
     text(snippet2, width/2, height-20);
+    textAlign(LEFT);
+    int geiger=0;
+    for (int i=0; i<radiationNames.length; i++) {
+      geiger+=radiationEmitted[i];
+      //if (radiationEmitted[i]>0){
+      //text (radiationNames[i]+": "+radiationEmitted[i], 22, 52+18*i);
+      //}
+    }
+    text ("Radiation count: "+geiger, 24, 42);
     //text("Decay mode: "+decayModes[atomicNumber][neutrons], 10, 50);
     //text("Halflife: "+halfLives[atomicNumber][neutrons], 10, 70);
+    if (finished==true) {
+      endScreen();
+    }
   }
 }
 Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from the centre, or the nearest to the latest already-doomed nucleon
@@ -467,7 +504,7 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
       currentNucleon=nucleons[i];
       if (currentNucleon.charge==charge) { // Find the furthest one
         float distance=sqrt(sq(currentNucleon.position.x-doomed[killList-1].position.x) + sq(currentNucleon.position.y-doomed[killList-1].position.y));
-        if (distance<smallestDistance && currentNucleon.doomLevel==0) {
+        if (distance<smallestDistance && currentNucleon.doomLevel==0 && currentNucleon!=protonOne) {
           smallestDistance=distance;
           chosenNucleon=currentNucleon;
         }
@@ -479,10 +516,10 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
   return chosenNucleon;
 }
 void shootProton () {
-  if (protonCannonCountdown<1) {
+  if (protonCannonCountdown<1 && !finished) {
     pop.trigger();
     protonCannon=protonCannonNeutral;
-    protonCannonCountdown=8;
+    protonCannonCountdown=12;
     currentCannon=0;
     //float relV=2*log((atomicNumber+9)/3);
     float relV=3;
@@ -490,11 +527,11 @@ void shootProton () {
   }
 }
 void shootNeutron () {
-  if (neutronCannonCountdown<1) {
+  if (neutronCannonCountdown<1 && !finished) {
     pop2.trigger();
     printIfDebugging("shootNeutron called");
     neutronCannon=neutronCannonNeutral;
-    neutronCannonCountdown=8;
+    neutronCannonCountdown=12;
     currentCannon=1;
     //float relV=2*log((atomicNumber+9)/3);
     float relV=3;
@@ -571,41 +608,43 @@ void reset() {
   }
   nucleonCount=0;
   protonOne=new Proton(0, 0, 0, 0);
-  if (java) {
-    minim = new Minim(this);
-    elementSounds=new AudioSample[119];
 
-    // load BD.wav from the data folder
+  minim = new Minim(this);
+  elementSounds=new AudioSample[119];
+  // load BD.wav from the data folder
+  if (pop==null) {
     pop = minim.loadSample("pop.mp3", 128);
     pop2 = minim.loadSample("pop2.mp3", 128);
-    soundsLoaded=2;
-    for (int i=2; i<12; i++) { // Need all files to exist or this bit bugs out
-      printIfDebugging("Element to load: "+soundsLoaded);   
-      if (elementSounds[i%10]!=null) {
-        elementSounds[i%10].close();
-      }
-      elementSounds[i%10]=minim.loadSample("mp3/"+i+".mp3", 128);
-      //printIfDebugging("Element loaded: "+i);
-      soundsLoaded++;
-    }
-    paused=true;
   }
+  soundsLoaded=2;
+  for (int i=2; i<12; i++) { // Need all files to exist or this bit bugs out
+    printIfDebugging("Element to load: "+soundsLoaded);   
+    if (elementSounds[i%10]!=null) {
+      elementSounds[i%10].close();
+    }
+    elementSounds[i%10]=minim.loadSample("mp3/"+i+".mp3", 128);
+    //printIfDebugging("Element loaded: "+i);
+    soundsLoaded++;
+  }
+  paused=true;
+
 
   if (elementSounds[1]!=null) {
     elementSounds[1].close();
   }
-  elementSounds[1]=minim.loadSample("mp3/1-"+(int)random(1, 14)+".mp3");
+  elementSounds[1]=minim.loadSample("mp3/1-"+(int)random(1, 15)+".mp3");
   freshlyStarted=true;
   for (int i=2; i<119; i++) {
     elementMade[i]=false;
   }
   for (int i=0; i<radiationEmitted.length; i++) {
-    radiationEmitted[i]=false;
+    radiationEmitted[i]=0;
   }
-  announcement="It all starts with hydrogen...";
+  announcement="It all starts with hydrogen";
   snippet="92% of all atoms in the universe";
   elementMade[1]=true;
   elementMade[0]=true;
+  finished=false;
 }
 void loadData() {
   halfLives=new float[178][178];
@@ -712,6 +751,7 @@ void loadData() {
     }
     // End JS-only bit
   }
+  credits=loadStrings("credits.txt");
 }
 void getHalfLife(int i) {
   /*
@@ -759,5 +799,24 @@ void getHalfLife(int i) {
    }
    printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
    */
+}
+
+void endScreen() {
+  //printIfDebugging("Finished!");
+  //println("Finished!");
+  randomSeed(3);
+  fill(0, 192);
+  rect(0, 0, width, height);
+  textAlign(CENTER);
+  textSize(20);
+  fill(255);
+  int imageSize=42;
+  for (int i=0; i<6; i++) {
+    image (neutronImages[int(random(1, 2))], random(0, width-imageSize), height-(random(height)+(millis()-finishTime)/100)%height, imageSize, imageSize);
+    image (protonImages[int(random(1, 2))], random(0, width-imageSize), height-(random(height)+(millis()-finishTime)/100)%height, imageSize, imageSize);
+  }
+  for (int i=0; i<credits.length; i++) {
+    text (credits[i], width/2, height-(millis()-finishTime)/20+i*24);
+  }
 }
 
