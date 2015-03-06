@@ -40,7 +40,7 @@ class Nucleon extends Particle { // It's possible this should be an interface
     }
 
     if (distSq<10) {
-      if (this.linkedIn==true||that.linkedIn==true) {
+      if ((this.linkedIn==true||that.linkedIn==true)&&distSq<4) { // Only counts if they've slowed down
         this.linkedIn=true;
         that.linkedIn=true;
       }

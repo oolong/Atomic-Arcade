@@ -7,6 +7,7 @@ Z  	N  	halflife           	decayMode
 1	4	7.995E-023	2N      
 1	5	2.848E-022	N       
 1	6	9.152E-015	2N?     
+2	0	0	P
 2	1	infinity
 2	2	infinity
 2	3	7.595E-022	A       

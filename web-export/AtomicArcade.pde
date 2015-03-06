@@ -1,14 +1,14 @@
-import ddf.minim.*;
+//import ddf.minim.*;
 //import minim.js;
 
 //import processing.serial.*;
 
 //import cc.arduino.*;
 
-Arduino arduino;
+//Arduino arduino;
 boolean arduinoised=false;
 
-/* @pjs preload="circle-32.png, start-page.jpg, pause-page.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
+/* @pjs preload="circle-32.png, refresh-button.png, start-page.jpg, pause-page.jpg, background-for-web-demo.jpg, proton-cannon-down.png, proton-cannon-neutral.png, proton-cannon-up.png, neutron-cannon-down.png, neutron-cannon-neutral.png, neutron-cannon-up.png, background-square.jpg, element-pad.png, circle-xxl.png, default.gif, default.png, neutron.gif, neutron0.png, neutron1.png, neutron2.png, neutron3.png, neutron4.png, neutron5.png, proton.gif, proton0.png, proton1.png, proton2.png, proton3.png, proton4.png, proton5.png"; 
  */
 
 
@@ -50,17 +50,17 @@ String[] elementSnippets;
 String[] elementSnippets2;
 String snippet="";
 String snippet2="";
-AudioSample[] elementSounds;
+//AudioSample[] elementSounds;
 int[] overallMood = { 
   0, 0
 };
-PImage backgroundImage, startScreen, pauseScreen, elementPad, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon, pauseButton;
+PImage backgroundImage, startScreen, pauseScreen, elementPad, refreshButton, protonCannonUp, neutronCannonUp, protonCannonNeutral, neutronCannonNeutral, protonCannonDown, neutronCannonDown, protonCannon, neutronCannon, pauseButton;
 PImage[] protonImages, neutronImages;
 Particle beta;
 Minim minim;
-AudioSample pop, pop2;
+//AudioSample pop, pop2;
 
-boolean debugging=false, java=true, paused=true, wasHigh=true, freshlyStarted=true, finished=false;
+boolean debugging=false, java=false, paused=true, wasHigh=true, freshlyStarted=true, finished=false, loading=true;
 
 void setup () {
   size(480, 640);
@@ -70,24 +70,27 @@ void setup () {
   frameRate(30);
   printIfDebugging("setup started");
 
-  if (arduinoised) {
-    println(Arduino.list());
-    arduino = new Arduino(this, Arduino.list()[0], 57600);
-    for (int i = 0; i <= 13; i++) {
-      arduino.pinMode(i, Arduino.INPUT);
-    }
-  }
+  /*if (arduinoised) {
+   println(Arduino.list());
+   arduino = new Arduino(this, Arduino.list()[0], 57600);
+   for (int i = 0; i <= 13; i++) {
+   arduino.pinMode(i, Arduino.INPUT);
+   }
+   }*/
   startScreen=loadImage("start-page.jpg");
   pauseScreen=loadImage("pause-page.jpg");
+
   //background (startScreen);
   image (startScreen, 0, 0, width, height);
-  redraw();
+  //redraw();
   //noLoop();
   nucleons=new Nucleon[500];
   doomed=new Nucleon[16];
   backgroundImage=loadImage("background-for-web-demo.jpg");
   elementPad=loadImage("element-pad.png");
   pauseButton=loadImage("pause.png");
+  printIfDebugging("pause button loaded");
+  refreshButton=loadImage("refresh-button.png");
   protonImages=new PImage[7];
   neutronImages=new PImage[7];
   for (int i=0; i<6; i++) {
@@ -111,6 +114,7 @@ void setup () {
   radiationEmitted=new int[6];
   elementNames[0]="Nothing?";
   elementSymbols[0]="0";
+  printIfDebugging("All done bar the data");
   loadData(); // Note that this method needs commenting or uncommenting depending on mode
 
   reset();
@@ -127,7 +131,16 @@ void draw () {
    * adjusting all positions
    */
 
-
+  if (!java && loading) {
+    for (int i=0; i<20; i++) {
+      if (halfLifeCounter==halfLifeList.length) {
+        loading=false;
+        break;
+      }
+      getHalfLife(halfLifeCounter);
+      halfLifeCounter+=1;
+    }
+  }
   if (paused) {
     //    background(startScreen);
     if (freshlyStarted) {
@@ -154,14 +167,13 @@ void draw () {
     }
   } 
   else {
-    if (!java && halfLifeCounter<6000) {
-      getHalfLife(halfLifeCounter);
-      halfLifeCounter+=1;
-    }
+
     //printIfDebugging("Not paused");
     //background (backgroundImage);
     if (freshlyStarted) {
-      elementSounds[1].trigger();
+      if (java) {
+        elementSounds[1].trigger();
+      }
       freshlyStarted=false;
     }
 
@@ -199,18 +211,15 @@ void draw () {
         Nucleon thisNucleon=nucleons[i];
         thisNucleon.updatePosition();
         if (millis()>doomTime+2000 && thisNucleon.mood==OHNOEZ) { // Two seconds of vibratory grace
+          printIfDebugging("2 seconds elapsed, apparently - current millis="+millis()+", doomTime="+doomTime);
           if (decayTypes[atomicNumber][neutrons]==POSITRON) { // Beta+ decay
             thisNucleon.active=false;
-            new Neutron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x, thisNucleon.velocity.y);
-            thisNucleon.velocity.x-=thisNucleon.position.x/20;
-            thisNucleon.velocity.y-=thisNucleon.position.y/20;
+            new Neutron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x-thisNucleon.position.x/20, thisNucleon.velocity.y-thisNucleon.position.y/20);
             beta=new Positron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.position.x/10, thisNucleon.position.y/10);
           }
           else if (decayTypes[atomicNumber][neutrons]==ELECTRON) { // Beta- decay
             thisNucleon.active=false;
-            new Proton(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x, thisNucleon.velocity.y);
-            thisNucleon.velocity.x-=thisNucleon.position.x/20;
-            thisNucleon.velocity.y-=thisNucleon.position.y/20;
+            new Proton(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.velocity.x-thisNucleon.position.x/20, thisNucleon.velocity.y-thisNucleon.position.y/20);
             beta=new Electron(thisNucleon.position.x, thisNucleon.position.y, thisNucleon.position.x/10, thisNucleon.position.y/10);
           }
           else {
@@ -302,15 +311,17 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
         snippet=elementSnippets[atomicNumber];
         snippet2=elementSnippets2[atomicNumber];
         elementMade[atomicNumber]=true;
-        elementSounds[atomicNumber%10].trigger();
-        printIfDebugging("sound triggered: "+atomicNumber+", "+elementSounds[atomicNumber%10].getMetaData().title());
-        printIfDebugging("now to load: "+(atomicNumber+2)+", position "+soundsLoaded%10);
-        if (elementSounds[(atomicNumber+2)%10]!=null) elementSounds[(atomicNumber+2)%10].close();
-        if ((atomicNumber+2)<119) {
-          elementSounds[(atomicNumber+2)%10]=minim.loadSample("mp3/"+(atomicNumber+2)+".mp3", 128);
+        if (java) {
+          elementSounds[atomicNumber%10].trigger();
+          printIfDebugging("sound triggered: "+atomicNumber+", "+elementSounds[atomicNumber%10].getMetaData().title());
+          printIfDebugging("now to load: "+(atomicNumber+2)+", position "+soundsLoaded%10);
+          if (elementSounds[(atomicNumber+2)%10]!=null) elementSounds[(atomicNumber+2)%10].close();
+          if ((atomicNumber+2)<119) {
+            elementSounds[(atomicNumber+2)%10]=minim.loadSample("mp3/"+(atomicNumber+2)+".mp3", 128);
+          }
+          printIfDebugging("sound loaded: "+(atomicNumber+2)+".mp3");
+          soundsLoaded++;
         }
-        printIfDebugging("sound loaded: "+(atomicNumber+2)+".mp3");
-        soundsLoaded++;
       }
       else if (atomicNumber!=oldAtomicNumber && atomicNumber>1) {
         announcement="Back to "+elementNames[atomicNumber]+".";
@@ -335,9 +346,10 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
         overallMood[0]=SMILE;
       }
 
-      doomTime=(int)(millis()+1000*halfLife*random(1)/random(1)); // Doom time is set within an infinite range centred on the half-life.
-      printIfDebugging("Doom will be in "+(doomTime-millis())+" milliseconds");
-      printIfDebugging("millis now="+millis());
+      doomTime=abs((int)(millis()+1000*halfLife*random(0, 1)/random(0, 1))); // Doom time is set within an infinite range centred on the half-life.
+      //println("doomTime="+doomTime);
+      printIfDebugging("Doom will be in "+(doomTime-millis())+" milliseconds, at "+doomTime);
+      printIfDebugging("millis now="+millis()+", random(0,1)="+random(0, 1));
       killList=0;
       for (int i=0; i<nucleonCount; i++) { // No nucleons should stay doomed
         nucleons[i].doomLevel=0;
@@ -376,6 +388,7 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
         overallMood[0]=SMILE;
         killList=0;
       }
+      printIfDebugging("New Element: "+atomicNumber+" Half life: "+halfLife+" Decay type: "+decayType);
     }
     protonOne.position.mult(0.9);
     protonOne.velocity.mult(0.9);
@@ -476,6 +489,13 @@ if (millis()>doomTime + 2000 && killList>0) { // Two second's grace period has e
       endScreen();
     }
   }
+  if (loading) {
+    pushMatrix();
+    translate(width-60, 50);
+    rotate(frameCount*0.3);
+    image(refreshButton, -30, -30, 60, 54);
+    popMatrix();
+  }
 }
 Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from the centre, or the nearest to the latest already-doomed nucleon
   Nucleon currentNucleon;
@@ -517,25 +537,29 @@ Nucleon chooseNucleon(int charge) { // Choose the furthest matching nucleon from
 }
 void shootProton () {
   if (protonCannonCountdown<1 && !finished) {
-    pop.trigger();
+    if (java) {
+      pop.trigger();
+    }
     protonCannon=protonCannonNeutral;
     protonCannonCountdown=12;
     currentCannon=0;
     //float relV=2*log((atomicNumber+9)/3);
     float relV=3;
-    new Proton (-width/(2*zoomLevel)+25, height/(2*zoomLevel)-54, relV, -relV*(height)/width);
+    new Proton (-width/(2*zoomLevel)+42, height/(2*zoomLevel)-74, relV, -relV*(height)/width);
   }
 }
 void shootNeutron () {
   if (neutronCannonCountdown<1 && !finished) {
-    pop2.trigger();
+    if (java) {
+      pop2.trigger();
+    }
     printIfDebugging("shootNeutron called");
     neutronCannon=neutronCannonNeutral;
     neutronCannonCountdown=12;
     currentCannon=1;
     //float relV=2*log((atomicNumber+9)/3);
     float relV=3;
-    new Neutron (width/(2*zoomLevel)-44, height/(2*zoomLevel)-54, -relV, -relV*(height)/width);
+    new Neutron (width/(2*zoomLevel)-66, height/(2*zoomLevel)-74, -relV, -relV*(height)/width);
     printIfDebugging("Neutron may have been created?");
   }
 }
@@ -608,31 +632,32 @@ void reset() {
   }
   nucleonCount=0;
   protonOne=new Proton(0, 0, 0, 0);
-
-  minim = new Minim(this);
-  elementSounds=new AudioSample[119];
-  // load BD.wav from the data folder
-  if (pop==null) {
-    pop = minim.loadSample("pop.mp3", 128);
-    pop2 = minim.loadSample("pop2.mp3", 128);
-  }
-  soundsLoaded=2;
-  for (int i=2; i<12; i++) { // Need all files to exist or this bit bugs out
-    printIfDebugging("Element to load: "+soundsLoaded);   
-    if (elementSounds[i%10]!=null) {
-      elementSounds[i%10].close();
+  if (java) {
+    minim = new Minim(this);
+    elementSounds=new AudioSample[119];
+    // load BD.wav from the data folder
+    if (pop==null) {
+      pop = minim.loadSample("pop.mp3", 128);
+      pop2 = minim.loadSample("pop2.mp3", 128);
     }
-    elementSounds[i%10]=minim.loadSample("mp3/"+i+".mp3", 128);
-    //printIfDebugging("Element loaded: "+i);
-    soundsLoaded++;
+    soundsLoaded=2;
+    for (int i=2; i<12; i++) { // Need all files to exist or this bit bugs out
+      printIfDebugging("Element to load: "+soundsLoaded);   
+      if (elementSounds[i%10]!=null) {
+        elementSounds[i%10].close();
+      }
+      elementSounds[i%10]=minim.loadSample("mp3/"+i+".mp3", 128);
+      //printIfDebugging("Element loaded: "+i);
+      soundsLoaded++;
+    }
+    if (elementSounds[1]!=null) {
+      elementSounds[1].close();
+    }
+    elementSounds[1]=minim.loadSample("mp3/1-"+(int)random(1, 15)+".mp3");
   }
   paused=true;
 
 
-  if (elementSounds[1]!=null) {
-    elementSounds[1].close();
-  }
-  elementSounds[1]=minim.loadSample("mp3/1-"+(int)random(1, 15)+".mp3");
   freshlyStarted=true;
   for (int i=2; i<119; i++) {
     elementMade[i]=false;
@@ -732,14 +757,39 @@ void loadData() {
   } 
   else {
     // JavaScript-only routine for reading and parsing files
-    redraw();
+    //redraw();
     String[] namesAndSymbols=loadStrings("elementnames.tsv");
     printIfDebugging(namesAndSymbols[0]);
     for (int i=0; i<namesAndSymbols.length; i++) {
-      String[] thisLine=splitTokens(namesAndSymbols[i]);
+      String[] thisLine=splitTokens(namesAndSymbols[i],"\t");
       printIfDebugging(thisLine[0]+ ", "+thisLine[1]+", "+thisLine[2]+", "+thisLine[3]);
       elementNames[i+1]=thisLine[2];
       elementSymbols[i+1]=thisLine[3];
+      String snippet=thisLine[4];
+      String snippet1="", snippet2="";
+      if (snippet.length()>36) {
+        String[] snippetBits=splitTokens(snippet);
+        int j=0;
+        while (snippet1.length ()<36) {
+          String[] twoBits= {
+            snippet1, snippetBits[j]
+          };
+          snippet1=join (twoBits, " ");
+          j++;
+        }
+        while (j<snippetBits.length) {
+          String[] twoBits= {
+            snippet2, snippetBits[j]
+          };
+          snippet2=join (twoBits, " ");
+          j++;
+        }
+      }
+      else {
+        snippet1=snippet;
+      }
+      elementSnippets[i+1]=snippet1;
+      elementSnippets2[i+1]=snippet2;
     }
     halfLifeList=loadStrings("halflives.tsv");
     printIfDebugging("Got halfLifeList. Length: "+halfLifeList.length);
@@ -754,51 +804,59 @@ void loadData() {
   credits=loadStrings("credits.txt");
 }
 void getHalfLife(int i) {
-  /*
+
   // for (int i=1; i<nuclides.length; i++) {
-   //if (i==nuclides.length-1) printIfDebugging("Decay-parsing loop "+i+" of "+nuclides.length);
-   String[] thisLine=splitTokens(halfLifeList[i]);
-   int protonCount=thisLine[0];
-   int neutronCount=thisLine[1];
-   float halfLife=thisLine[2];
-   if (isNaN(parseFloat(halfLife))) {
-   halfLife=10000000;
-   printIfDebugging("Let's just pretend ten million is really infinity");
-   }
-   printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
-   halfLives[protonCount][neutronCount]=halfLife;
-   // String decayMode=thisLine[3];
-   // String decayMode="A";
-   if (thisLine.length<4) {
-   decayMode="Ah";
-   printIfDebugging("thisLine.length<4");
-   } else {
-   decayMode=thisLine[3];
-   printIfDebugging("thisLine.length>4");
-   }
-   printIfDebugging("thisLine.length="+thisLine.length);
-   //decayMode="WTF";//decayMode;
-   printIfDebugging ("decayMode="+decayMode);
-   decayModes[protonCount][neutronCount]=decayMode;
-   if (decayMode.charAt(0)=="A") {
-   printIfDebugging ("A");
-   decayTypes[protonCount][neutronCount]=HELIUM;
-   } else if (decayMode.charAt(0)=="E") {
-   decayTypes[protonCount][neutronCount]=POSITRON;
-   } else if (decayMode.charAt(0)=="B") {
-   decayTypes[protonCount][neutronCount]=ELECTRON;
-   printIfDebugging ("decayType diagnosed from 'B'");
-   } else if (decayMode.charAt(0)=="P") {
-   decayTypes[protonCount][neutronCount]=PROTON;
-   } else if (decayMode.charAt(0)=="N") {
-   decayTypes[protonCount][neutronCount]=NEUTRON;
-   } else if (decayMode==null) {
-   decayTypes[protonCount][neutronCount]=NONE;
-   }  else {
-   decayTypes[protonCount][neutronCount]=UNKNOWN;
-   }
-   printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
-   */
+  //if (i==nuclides.length-1) printIfDebugging("Decay-parsing loop "+i+" of "+nuclides.length);
+  String[] thisLine=splitTokens(halfLifeList[i]);
+  int protonCount=thisLine[0];
+  int neutronCount=thisLine[1];
+  float halfLife=thisLine[2];
+  if (isNaN(parseFloat(halfLife))) {
+    halfLife=10000000;
+    printIfDebugging("Let's just pretend ten million is really infinity");
+  }
+  printIfDebugging("Z="+protonCount+", N="+neutronCount+", halfLife="+halfLife);
+  if (halfLives[protonCount][neutronCount]==0) {
+    halfLives[protonCount][neutronCount]=halfLife;
+    // String decayMode=thisLine[3];
+    // String decayMode="A";
+    if (thisLine.length<4) {
+      decayMode="Ah";
+      printIfDebugging("thisLine.length<4");
+    } 
+    else {
+      decayMode=thisLine[3];
+      printIfDebugging("thisLine.length>4");
+    }
+    printIfDebugging("thisLine.length="+thisLine.length);
+    //decayMode="WTF";//decayMode;
+    printIfDebugging ("decayMode="+decayMode);
+    decayModes[protonCount][neutronCount]=decayMode;
+    if (decayMode.charAt(0)=="A") {
+      printIfDebugging ("A");
+      decayTypes[protonCount][neutronCount]=HELIUM;
+    } 
+    else if (decayMode.charAt(0)=="E") {
+      decayTypes[protonCount][neutronCount]=POSITRON;
+    } 
+    else if (decayMode.charAt(0)=="B") {
+      decayTypes[protonCount][neutronCount]=ELECTRON;
+      printIfDebugging ("decayType diagnosed from 'B'");
+    } 
+    else if (decayMode.charAt(0)=="P") {
+      decayTypes[protonCount][neutronCount]=PROTON;
+    } 
+    else if (decayMode.charAt(0)=="N") {
+      decayTypes[protonCount][neutronCount]=NEUTRON;
+    } 
+    else if (decayMode==null) {
+      decayTypes[protonCount][neutronCount]=NONE;
+    }  
+    else {
+      decayTypes[protonCount][neutronCount]=UNKNOWN;
+    }
+  }
+  printIfDebugging("decayType="+decayTypes[protonCount][neutronCount]);
 }
 
 void endScreen() {
